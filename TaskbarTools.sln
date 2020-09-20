@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test-TaskbarTools", "Test-TaskbarTools\Test-TaskbarTools.csproj", "{D2495A5F-D60C-472E-83AA-E57E856298FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -20,6 +22,10 @@ Global
 		{25252187-4CE1-4F25-96F0-8A96A2C5B68F}.Debug|x64.Build.0 = Debug|x64
 		{25252187-4CE1-4F25-96F0-8A96A2C5B68F}.Release|x64.ActiveCfg = Release|x64
 		{25252187-4CE1-4F25-96F0-8A96A2C5B68F}.Release|x64.Build.0 = Release|x64
+		{D2495A5F-D60C-472E-83AA-E57E856298FF}.Debug|x64.ActiveCfg = Debug|x64
+		{D2495A5F-D60C-472E-83AA-E57E856298FF}.Debug|x64.Build.0 = Debug|x64
+		{D2495A5F-D60C-472E-83AA-E57E856298FF}.Release|x64.ActiveCfg = Release|x64
+		{D2495A5F-D60C-472E-83AA-E57E856298FF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

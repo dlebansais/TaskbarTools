@@ -3,6 +3,10 @@ Create an icon on the Windows taskbar and manage its menu.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/pit8rfvu7s3pxg79?svg=true)](https://ci.appveyor.com/project/dlebansais/taskbartools)
 
+## Requirements
+
+This tool requires .NET Framework 4.8, and you must add a reference to System.Drawing in your project. 
+
 ## Creating the taskbar icon
 
 To create the taskbar icon, you must provide an actual icon. You can get it from various sources, for instance:
@@ -21,8 +25,8 @@ TemporaryIcon.Dispose();
  
 ````
 // In MyFile.ico properties, choose "Embedded Resource". 
-	Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream("MyProject.MyFile.ico"))
+Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
+using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream("MyNamespace.MyFile.ico"))
 {
     Icon ResourceIcon = new Icon(ResourceStream);
 	/* ... */
@@ -58,6 +62,10 @@ The last method, `SetMenuIcon`, can take a `Bitmap` or an `Icon`.
 
 You can also change the taskbar icon itself with the `UpdateIcon` method.
 
+## Removing the taskbar icon
+
+The icon is removed from the taskbar when you dispose of the `TaskbarIcon` object with a `using` statement.
+ 
 ## Nullable support
 
 To avoid declaring a nullable type, you can use the static value `TaskbarIcon.Empty`.

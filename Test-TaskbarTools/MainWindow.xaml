@@ -1,0 +1,54 @@
+﻿<Window x:Class="TestTaskbarTools.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Test_TaskbarTools"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <RoutedCommand x:Key="CommandClose"/>
+        <RoutedCommand x:Key="CommandClearToolTip"/>
+        <RoutedCommand x:Key="CommandSetToolTip"/>
+        <RoutedCommand x:Key="CommandSetIcon"/>
+        <RoutedCommand x:Key="CommandClearCloseIcon"/>
+        <RoutedCommand x:Key="CommandSetCloseIcon"/>
+        <RoutedCommand x:Key="CommandEnable"/>
+        <RoutedCommand x:Key="CommandDisable"/>
+        <RoutedCommand x:Key="CommandChangeText"/>
+        <RoutedCommand x:Key="CommandShow"/>
+        <RoutedCommand x:Key="CommandHide"/>
+        <ContextMenu x:Key="Menu">
+            <MenuItem Header="Close" Command="{StaticResource CommandClose}"/>
+            <Separator/>
+            <MenuItem Header="Clear tooltip" Command="{StaticResource CommandClearToolTip}"/>
+            <MenuItem Header="Change tooltip" Command="{StaticResource CommandSetToolTip}"/>
+            <Separator/>
+            <MenuItem Header="Set Taskbar Icon" Command="{StaticResource CommandSetIcon}"/>
+            <Separator/>
+            <MenuItem Header="Clear Close Icon" Command="{StaticResource CommandClearCloseIcon}"/>
+            <MenuItem Header="Set Close Icon" Command="{StaticResource CommandSetCloseIcon}"/>
+            <Separator/>
+            <MenuItem Header="Enable Close" Command="{StaticResource CommandEnable}"/>
+            <MenuItem Header="Disable Close" Command="{StaticResource CommandDisable}"/>
+            <Separator/>
+            <MenuItem Header="Change Close Text" Command="{StaticResource CommandChangeText}"/>
+            <MenuItem Header="Show Close" Command="{StaticResource CommandShow}"/>
+            <MenuItem Header="Hide Close" Command="{StaticResource CommandHide}"/>
+        </ContextMenu>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource CommandClose}" Executed="OnClose"/>
+        <CommandBinding Command="{StaticResource CommandClearToolTip}" Executed="OnClearToolTip"/>
+        <CommandBinding Command="{StaticResource CommandSetToolTip}" Executed="OnSetToolTip"/>
+        <CommandBinding Command="{StaticResource CommandSetIcon}" Executed="OnSetIcon"/>
+        <CommandBinding Command="{StaticResource CommandClearCloseIcon}" Executed="OnClearCloseIcon"/>
+        <CommandBinding Command="{StaticResource CommandSetCloseIcon}" Executed="OnSetCloseIcon"/>
+        <CommandBinding Command="{StaticResource CommandEnable}" Executed="OnEnable"/>
+        <CommandBinding Command="{StaticResource CommandDisable}" Executed="OnDisable"/>
+        <CommandBinding Command="{StaticResource CommandChangeText}" Executed="OnChangeText"/>
+        <CommandBinding Command="{StaticResource CommandShow}" Executed="OnShow"/>
+        <CommandBinding Command="{StaticResource CommandHide}" Executed="OnHide"/>
+    </Window.CommandBindings>
+    <Grid/>
+</Window>
