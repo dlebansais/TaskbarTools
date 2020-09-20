@@ -6,6 +6,7 @@
     using System.Windows;
     using System.Windows.Forms;
     using System.Windows.Input;
+    using Contracts;
 
     /// <summary>
     /// Represents a custom icon added to the taskbar.
@@ -48,22 +49,23 @@
         /// <summary>
         /// Create and display a taskbar icon.
         /// </summary>
-        /// <param name="icon">The icon displayed.</param>
+        /// <param name="icon">The icon displayed. The caller is responsible for releasing it when the created instance of <see cref="TaskbarIcon"/> is released.</param>
         /// <param name="toolTipText">The text shown when the mouse is over the icon, can be null.</param>
         /// <param name="menu">The menu that pops up when the user left click the icon, can be null.</param>
         /// <param name="target">The object that receives command notifications, can be null.</param>
         /// <returns>The created taskbar icon object.</returns>
         public static TaskbarIcon Create(Icon icon, string? toolTipText, System.Windows.Controls.ContextMenu? menu, IInputElement? target)
         {
+            Contract.RequireNotNull(icon, out Icon Icon);
+
             try
             {
-                NotifyIcon NotifyIcon = new NotifyIcon();
-                NotifyIcon.Icon = icon;
-                NotifyIcon.Text = string.Empty;
+                NotifyIcon NotifyIcon = new NotifyIcon { Icon = Icon, Text = string.Empty };
                 NotifyIcon.Click += OnClick;
 
                 TaskbarIcon NewTaskbarIcon = new TaskbarIcon(NotifyIcon, target);
                 NotifyIcon.ContextMenuStrip = NewTaskbarIcon.MenuToMenuStrip(menu);
+
                 ActiveIconList.Add(NewTaskbarIcon);
                 NewTaskbarIcon.UpdateToolTipText(toolTipText);
                 NotifyIcon.Visible = true;
@@ -83,7 +85,9 @@
         /// <param name="isChecked">The new value of the check mark.</param>
         public static void ToggleMenuCheck(ICommand command, out bool isChecked)
         {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
+            Contract.RequireNotNull(command, out ICommand Command);
+
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
             isChecked = !MenuItem.Checked;
             MenuItem.Checked = isChecked;
         }
@@ -95,7 +99,9 @@
         /// <returns>True if the menu item has a check mark, false otherwise.</returns>
         public static bool IsMenuChecked(ICommand command)
         {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
+            Contract.RequireNotNull(command, out ICommand Command);
+
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
             return MenuItem.Checked;
         }
 
@@ -106,7 +112,9 @@
         /// <param name="isChecked">True if the menu item must have a check mark, false otherwise.</param>
         public static void SetMenuCheck(ICommand command, bool isChecked)
         {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
+            Contract.RequireNotNull(command, out ICommand Command);
+
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
             MenuItem.Checked = isChecked;
         }
 
@@ -117,19 +125,11 @@
         /// <param name="text">The new menu item text.</param>
         public static void SetMenuText(ICommand command, string text)
         {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
-            MenuItem.Text = text;
-        }
+            Contract.RequireNotNull(command, out ICommand Command);
+            Contract.RequireNotNull(text, out string Text);
 
-        /// <summary>
-        /// Enable or disable the menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
-        /// </summary>
-        /// <param name="command">The command associated to the menu item.</param>
-        /// <param name="isEnabled">True if enabled.</param>
-        public static void SetMenuIsEnabled(ICommand command, bool isEnabled)
-        {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
-            MenuItem.Enabled = isEnabled;
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+            MenuItem.Text = Text;
         }
 
         /// <summary>
@@ -139,8 +139,23 @@
         /// <param name="isVisible">True to show the menu item.</param>
         public static void SetMenuIsVisible(ICommand command, bool isVisible)
         {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
+            Contract.RequireNotNull(command, out ICommand Command);
+
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
             MenuItem.Visible = isVisible;
+        }
+
+        /// <summary>
+        /// Enable or disable the menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
+        /// </summary>
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="isEnabled">True if enabled.</param>
+        public static void SetMenuIsEnabled(ICommand command, bool isEnabled)
+        {
+            Contract.RequireNotNull(command, out ICommand Command);
+
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+            MenuItem.Enabled = isEnabled;
         }
 
         /// <summary>
@@ -150,11 +165,13 @@
         /// <param name="icon">The icon to set, null for no icon.</param>
         public static void SetMenuIcon(ICommand command, Icon? icon)
         {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
+            Contract.RequireNotNull(command, out ICommand Command);
+
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
 
             if (icon != null)
                 MenuItem.Image = icon.ToBitmap();
-                else
+            else
                 MenuItem.Image = null;
         }
 
@@ -165,7 +182,9 @@
         /// <param name="bitmap">The icon to set, as a bitmap, null for no icon.</param>
         public static void SetMenuIcon(ICommand command, Bitmap? bitmap)
         {
-            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
+            Contract.RequireNotNull(command, out ICommand Command);
+
+            ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
 
             if (bitmap != null)
                 MenuItem.Image = bitmap;
@@ -176,10 +195,16 @@
         /// <summary>
         /// Change the taskbar icon.
         /// </summary>
-        /// <param name="icon">The icon displayed.</param>
+        /// <param name="icon">The new icon displayed. The caller is responsible for releasing it as well as the old icon.</param>
         public void UpdateIcon(Icon icon)
         {
-            SetNotifyIcon(NotifyIcon, icon);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            Contract.RequireNotNull(icon, out Icon Icon);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
+            AssertNotEmpty();
+
+            SetNotifyIcon(NotifyIcon, Icon);
         }
 
         /// <summary>
@@ -188,6 +213,8 @@
         /// <param name="toolTipText">The new tool tip text.</param>
         public void UpdateToolTipText(string? toolTipText)
         {
+            AssertNotEmpty();
+
             // Various versions of windows have length limitations (documented as usual).
             // We remove extra lines until it works...
             for (;;)
@@ -220,19 +247,26 @@
 
         /// <summary>
         /// Prepares a menu item before is is added to a menu, before calling <see cref="Create"/>.
-        /// This method is required only if either <paramref>IsVisible</paramref> or <paramref>IsEnabled</paramref> is false.
+        /// Calling this method is required only if either <paramref name="isVisible"/> or <paramref name="isEnabled"/> is false.
         /// </summary>
         /// <param name="item">The modified menu item.</param>
         /// <param name="isVisible">True if the menu should be visible.</param>
         /// <param name="isEnabled">True if the menu should be enabled.</param>
         public static void PrepareMenuItem(System.Windows.Controls.MenuItem item, bool isVisible, bool isEnabled)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            Contract.RequireNotNull(item, out System.Windows.Controls.MenuItem Item);
 
-            item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
+            Item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
         }
 
+        private void AssertNotEmpty()
+        {
+            if (this == Empty)
+                throw new ArgumentException("Method call on TaskbarIcon.Empty not allowed");
+        }
+        #endregion
+
+        #region Implementation
         private static void SetNotifyIconText(NotifyIcon ni, string? text)
         {
             Type t = typeof(NotifyIcon);
@@ -259,7 +293,9 @@
 
             throw new InvalidCommandException(command);
         }
+        #endregion
 
+        #region Events
         /// <summary>
         /// Event raised before the menu pops up.
         /// </summary>
@@ -269,9 +305,7 @@
         /// Event raised when the icon is clicked.
         /// </summary>
         public event EventHandler? IconClicked;
-        #endregion
 
-        #region Events
         private static void OnClick(object sender, EventArgs e)
         {
             if (e is System.Windows.Forms.MouseEventArgs AsMouseEventArgs)
@@ -285,7 +319,11 @@
             }
         }
 
-        private void OnClick(MouseButtons button)
+        /// <summary>
+        /// Called when a mouse button has been clicked on the taskbar icon.
+        /// </summary>
+        /// <param name="button">The mouse button.</param>
+        protected void OnClick(MouseButtons button)
         {
             switch (button)
             {
@@ -328,7 +366,7 @@
                         AddSubmenuItem(destinationItems, AsMenuItem);
                     else
                         AddMenuItem(destinationItems, AsMenuItem);
-                else if (Item is System.Windows.Controls.Separator AsSeparator)
+                else if (Item is System.Windows.Controls.Separator)
                     AddSeparator(destinationItems);
         }
 
@@ -356,9 +394,10 @@
                 NewMenuItem = new ToolStripMenuItem(MenuHeader);
 
             NewMenuItem.Click += OnMenuClicked;
+
             // See PrepareMenuItem for using the visibility to carry Visible/Enabled flags
-            NewMenuItem.Visible = (menuItem.Visibility != Visibility.Collapsed);
-            NewMenuItem.Enabled = (menuItem.Visibility == Visibility.Visible);
+            NewMenuItem.Visible = menuItem.Visibility != Visibility.Collapsed;
+            NewMenuItem.Enabled = menuItem.Visibility == Visibility.Visible;
             NewMenuItem.Checked = menuItem.IsChecked;
 
             destinationItems.Add(NewMenuItem);
@@ -382,8 +421,8 @@
             }
         }
 
-        private static Dictionary<ToolStripMenuItem, TaskbarIcon> MenuTable = new Dictionary<ToolStripMenuItem, TaskbarIcon>();
-        private static Dictionary<ToolStripMenuItem, ICommand> CommandTable = new Dictionary<ToolStripMenuItem, ICommand>();
+        private static readonly Dictionary<ToolStripMenuItem, TaskbarIcon> MenuTable = new Dictionary<ToolStripMenuItem, TaskbarIcon>();
+        private static readonly Dictionary<ToolStripMenuItem, ICommand> CommandTable = new Dictionary<ToolStripMenuItem, ICommand>();
         #endregion
 
         #region Implementation of IDisposable
@@ -429,18 +468,17 @@
         /// </summary>
         private void DisposeNow()
         {
-            using (NotifyIcon ToRemove = NotifyIcon)
-            {
-                ToRemove.Visible = false;
-                ToRemove.Click -= OnClick;
+            using NotifyIcon ToRemove = NotifyIcon;
 
-                foreach (TaskbarIcon Item in ActiveIconList)
-                    if (Item.NotifyIcon == NotifyIcon)
-                    {
-                        ActiveIconList.Remove(Item);
-                        break;
-                    }
-            }
+            ToRemove.Visible = false;
+            ToRemove.Click -= OnClick;
+
+            foreach (TaskbarIcon Item in ActiveIconList)
+                if (Item.NotifyIcon == NotifyIcon)
+                {
+                    ActiveIconList.Remove(Item);
+                    break;
+                }
         }
         #endregion
     }
