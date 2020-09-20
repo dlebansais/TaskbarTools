@@ -2,15 +2,20 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Drawing;
     using System.Windows;
     using System.Windows.Forms;
     using System.Windows.Input;
 
-    internal class TaskbarIcon : IDisposable
+    /// <summary>
+    /// Represents a custom icon added to the taskbar.
+    /// </summary>
+    public class TaskbarIcon : IDisposable
     {
         #region Init
+        /// <summary>
+        /// Gets the neutral, empty icon instance for code with nullable enabled.
+        /// </summary>
         public static TaskbarIcon Empty { get; } = new TaskbarIcon();
 
         private TaskbarIcon()
@@ -19,33 +24,42 @@
             Target = Keyboard.FocusedElement;
         }
 
-        protected TaskbarIcon(NotifyIcon notifyIcon, IInputElement target)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaskbarIcon"/> class.
+        /// </summary>
+        /// <param name="notifyIcon">The system icon instance.</param>
+        /// <param name="target">The target input element for menu interaction. Can be null.</param>
+        protected TaskbarIcon(NotifyIcon notifyIcon, IInputElement? target)
         {
             NotifyIcon = notifyIcon;
             Target = target;
         }
 
+        /// <summary>
+        /// Gets the list of icons added to the taskbar with this API.
+        /// </summary>
         protected static List<TaskbarIcon> ActiveIconList { get; private set; } = new List<TaskbarIcon>();
-        private NotifyIcon NotifyIcon;
-        private IInputElement Target;
+
+        private readonly NotifyIcon NotifyIcon;
+        private readonly IInputElement? Target;
         #endregion
 
         #region Client Interface
         /// <summary>
         /// Create and display a taskbar icon.
         /// </summary>
-        /// <param name="icon">The icon displayed</param>
-        /// <param name="toolTipText">The text shown when the mouse is over the icon, can be null</param>
-        /// <param name="menu">The menu that pops up when the user left click the icon, can be null</param>
-        /// <param name="target">The object that receives command notifications, can be null</param>
-        /// <returns>The created taskbar icon object</returns>
-        public static TaskbarIcon Create(Icon icon, string toolTipText, System.Windows.Controls.ContextMenu menu, IInputElement target)
+        /// <param name="icon">The icon displayed.</param>
+        /// <param name="toolTipText">The text shown when the mouse is over the icon, can be null.</param>
+        /// <param name="menu">The menu that pops up when the user left click the icon, can be null.</param>
+        /// <param name="target">The object that receives command notifications, can be null.</param>
+        /// <returns>The created taskbar icon object.</returns>
+        public static TaskbarIcon Create(Icon icon, string? toolTipText, System.Windows.Controls.ContextMenu? menu, IInputElement? target)
         {
             try
             {
                 NotifyIcon NotifyIcon = new NotifyIcon();
                 NotifyIcon.Icon = icon;
-                NotifyIcon.Text = "";
+                NotifyIcon.Text = string.Empty;
                 NotifyIcon.Click += OnClick;
 
                 TaskbarIcon NewTaskbarIcon = new TaskbarIcon(NotifyIcon, target);
@@ -65,8 +79,8 @@
         /// <summary>
         /// Toggles the check mark of a menu item.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="isChecked">The new value of the check mark</param>
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="isChecked">The new value of the check mark.</param>
         public static void ToggleMenuCheck(ICommand command, out bool isChecked)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
@@ -77,8 +91,8 @@
         /// <summary>
         /// Returns the current check mark of a menu item.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <returns>True if the menu item has a check mark, false otherwise</returns>
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <returns>True if the menu item has a check mark, false otherwise.</returns>
         public static bool IsMenuChecked(ICommand command)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
@@ -86,10 +100,10 @@
         }
 
         /// <summary>
-        /// Set the check mark of a menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up. 
+        /// Set the check mark of a menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="isChecked">True if the menu item must have a check mark, false otherwise</param>
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="isChecked">True if the menu item must have a check mark, false otherwise.</param>
         public static void SetMenuCheck(ICommand command, bool isChecked)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
@@ -97,10 +111,10 @@
         }
 
         /// <summary>
-        /// Set the text of menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up. 
+        /// Set the text of menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="text">The new menu item text</param>
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="text">The new menu item text.</param>
         public static void SetMenuText(ICommand command, string text)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
@@ -108,10 +122,10 @@
         }
 
         /// <summary>
-        /// Enable or disable the menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up. 
+        /// Enable or disable the menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="isEnabled">True if enabled</param>
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="isEnabled">True if enabled.</param>
         public static void SetMenuIsEnabled(ICommand command, bool isEnabled)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
@@ -119,10 +133,10 @@
         }
 
         /// <summary>
-        /// Show or hide the menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up. 
+        /// Show or hide the menu item. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="isVisible">True to show the menu item</param>
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="isVisible">True to show the menu item.</param>
         public static void SetMenuIsVisible(ICommand command, bool isVisible)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
@@ -130,32 +144,39 @@
         }
 
         /// <summary>
-        /// Set the menu item icon. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up. 
+        /// Set the menu item icon. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="icon">The icon to set, null for no icon</param>
-        public static void SetMenuIcon(ICommand command, Icon icon)
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="icon">The icon to set, null for no icon.</param>
+        public static void SetMenuIcon(ICommand command, Icon? icon)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
-            MenuItem.Image = icon.ToBitmap();
+
+            if (icon != null)
+                MenuItem.Image = icon.ToBitmap();
+                else
+                MenuItem.Image = null;
         }
 
         /// <summary>
-        /// Set the menu item icon. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up. 
+        /// Set the menu item icon. This can be called within a handler of the <see cref="MenuOpening"/> event, the change is applied as the menu pops up.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="bitmap">The icon to set, as a bitmap, null for no icon</param>
-        public static void SetMenuIcon(ICommand command, Bitmap bitmap)
+        /// <param name="command">The command associated to the menu item.</param>
+        /// <param name="bitmap">The icon to set, as a bitmap, null for no icon.</param>
+        public static void SetMenuIcon(ICommand command, Bitmap? bitmap)
         {
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
-            MenuItem.Image = bitmap;
+
+            if (bitmap != null)
+                MenuItem.Image = bitmap;
+            else
+                MenuItem.Image = null;
         }
 
         /// <summary>
         /// Change the taskbar icon.
         /// </summary>
-        /// <param name="command">The command associated to the menu item</param>
-        /// <param name="text">The new menu item text</param>
+        /// <param name="icon">The icon displayed.</param>
         public void UpdateIcon(Icon icon)
         {
             SetNotifyIcon(NotifyIcon, icon);
@@ -164,8 +185,8 @@
         /// <summary>
         /// Set the tool tip text displayed when the mouse is over the taskbar icon.
         /// </summary>
-        /// <param name="toolTipText">The new tool tip text</param>
-        public void UpdateToolTipText(string toolTipText)
+        /// <param name="toolTipText">The new tool tip text.</param>
+        public void UpdateToolTipText(string? toolTipText)
         {
             // Various versions of windows have length limitations (documented as usual).
             // We remove extra lines until it works...
@@ -176,15 +197,15 @@
                     SetNotifyIconText(NotifyIcon, toolTipText);
                     return;
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
-                    if (string.IsNullOrEmpty(toolTipText))
-                        throw;
-                    else
+                    if (toolTipText != null && toolTipText.Length > 0)
                     {
                         string[] Split = toolTipText.Split('\r');
 
-                        toolTipText = "";
+                        toolTipText = string.Empty;
                         for (int i = 0; i + 1 < Split.Length; i++)
                         {
                             if (i > 0)
@@ -201,18 +222,19 @@
         /// Prepares a menu item before is is added to a menu, before calling <see cref="Create"/>.
         /// This method is required only if either <paramref>IsVisible</paramref> or <paramref>IsEnabled</paramref> is false.
         /// </summary>
-        /// <param name="item">The modified menu item</param>
-        /// <param name="isVisible">True if the menu should be visible</param>
-        /// <param name="isEnabled">True if the menu should be enabled</param>
+        /// <param name="item">The modified menu item.</param>
+        /// <param name="isVisible">True if the menu should be visible.</param>
+        /// <param name="isEnabled">True if the menu should be enabled.</param>
         public static void PrepareMenuItem(System.Windows.Controls.MenuItem item, bool isVisible, bool isEnabled)
         {
-            item.Visibility = isVisible ? (isEnabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden) : System.Windows.Visibility.Collapsed;
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
         }
 
-        private static void SetNotifyIconText(NotifyIcon ni, string text)
+        private static void SetNotifyIconText(NotifyIcon ni, string? text)
         {
-            Debug.Assert(text.Length < 128);
-
             Type t = typeof(NotifyIcon);
             System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
             t.GetField("text", hidden).SetValue(ni, text);
@@ -285,10 +307,15 @@
         #endregion
 
         #region Menu
-        private ContextMenuStrip MenuToMenuStrip(System.Windows.Controls.ContextMenu menu)
+        private ContextMenuStrip? MenuToMenuStrip(System.Windows.Controls.ContextMenu? menu)
         {
-            ContextMenuStrip Result = new ContextMenuStrip();
-            ConvertToolStripMenuItems(menu.Items, Result.Items);
+            ContextMenuStrip? Result = null;
+
+            if (menu != null)
+            {
+                Result = new ContextMenuStrip();
+                ConvertToolStripMenuItems(menu.Items, Result.Items);
+            }
 
             return Result;
         }
@@ -330,8 +357,8 @@
 
             NewMenuItem.Click += OnMenuClicked;
             // See PrepareMenuItem for using the visibility to carry Visible/Enabled flags
-            NewMenuItem.Visible = (menuItem.Visibility != System.Windows.Visibility.Collapsed);
-            NewMenuItem.Enabled = (menuItem.Visibility == System.Windows.Visibility.Visible);
+            NewMenuItem.Visible = (menuItem.Visibility != Visibility.Collapsed);
+            NewMenuItem.Enabled = (menuItem.Visibility == Visibility.Visible);
             NewMenuItem.Checked = menuItem.IsChecked;
 
             destinationItems.Add(NewMenuItem);
@@ -360,12 +387,46 @@
         #endregion
 
         #region Implementation of IDisposable
+        /// <summary>
+        /// Called when an object should release its resources.
+        /// </summary>
+        /// <param name="isDisposing">Indicates if resources must be disposed now.</param>
         protected virtual void Dispose(bool isDisposing)
         {
-            if (isDisposing)
-                DisposeNow();
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                if (isDisposing)
+                    DisposeNow();
+            }
         }
 
+        /// <summary>
+        /// Called when an object should release its resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="TaskbarIcon"/> class.
+        /// </summary>
+        ~TaskbarIcon()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// True after <see cref="Dispose(bool)"/> has been invoked.
+        /// </summary>
+        private bool IsDisposed;
+
+        /// <summary>
+        /// Disposes of every reference that must be cleaned up.
+        /// </summary>
         private void DisposeNow()
         {
             using (NotifyIcon ToRemove = NotifyIcon)
@@ -380,17 +441,6 @@
                         break;
                     }
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~TaskbarIcon()
-        {
-            Dispose(false);
         }
         #endregion
     }
