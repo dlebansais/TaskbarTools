@@ -9,19 +9,23 @@ To create the taskbar icon, you must provide an actual icon. You can get it from
 
 + A PNG bitmap
 
+````
     Bitmap ResourceBitmap = new Bitmap("MyFile.png");
     IntPtr Handle = ResourceBitmap.GetHicon();
     Icon TemporaryIcon = Icon.FromHandle(Handle);
     Icon ResourceIcon = (Icon)TemporaryIcon.Clone();
     TemporaryIcon.Dispose();
+````
 
 + A resource icon
  
+````
 	// In MyFile.ico properties, choose "Embedded Resource". 
  	Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
 	using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream("MyProject.MyFile.ico"))
 	{
         Icon ResourceIcon = new Icon(ResourceStream);
+````
 
 You can also associate a tooltip and a menu to the icon. For the tooltip, just specify your text, or null, when calling `Create`. To change the tooltip, call `UpdateToolTipText`.
 
