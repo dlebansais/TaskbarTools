@@ -13,7 +13,7 @@
         /// Initializes a new instance of the <see cref="IconCreationFailedException"/> class.
         /// </summary>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
-        public IconCreationFailedException(Exception innerException)
+        internal IconCreationFailedException(Exception innerException)
             : base(innerException?.Message, innerException)
         {
         }
