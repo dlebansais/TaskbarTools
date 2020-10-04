@@ -9,6 +9,9 @@ branches:
 skip_commits:
   message: "*[skip ci]*"
 
+# Start builds on tags only
+skip_non_tags: true
+
 image: Visual Studio 2019
 
 # scripts that are called at very beginning, before repo cloning
@@ -24,22 +27,33 @@ before_build:
 build:
   project: build_all.xml
 
+after_build:
+  - dotnet pack --configuration Release /p:Platform=x64 TaskbarTools/TaskbarTools.csproj
+
 test: off
 
 artifacts:
   - path: TaskbarTools/bin/
-    name: TaskbarTools
+    name: TaskbarTools-Release
+  - path: TaskbarTools/bin/x64/Release/TaskbarTools.*.nupkg
+    name: TaskbarTools-Package
 
 deploy:
-  release: '%APPVEYOR_REPO_TAG_NAME%'
-  description: '%APPVEYOR_REPO_COMMIT_MESSAGE%'
-  provider: GitHub
-  auth_token:
-    secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
-  artifact: TaskbarTools
-  draft: true
-  prerelease: false
-  on:
-    branch: master
-    APPVEYOR_REPO_TAG: true        # deploy on tag push only
-
+  - provider: GitHub
+    release: '%APPVEYOR_REPO_TAG_NAME%'
+    description: '%APPVEYOR_REPO_COMMIT_MESSAGE%'
+    auth_token:
+      secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
+    artifact: TaskbarTools-Release
+    draft: true
+    prerelease: false
+    on:
+      branch: master
+      APPVEYOR_REPO_TAG: true        # deploy on tag push only
+  - provider: NuGet
+    server: https://nuget.pkg.github.com/dlebansais/index.json
+    artifact: TaskbarTools-Package
+    username: dlebansais
+    api_key:
+      secure: GOksqNi8I7Vs6dcsfosJvSa9vMaZH3zLQJjnx+ruJy6ZeLF075mifj4MdRI34E8W
+    skip_symbols: true
