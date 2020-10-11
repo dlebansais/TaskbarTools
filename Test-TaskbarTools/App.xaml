@@ -1,6 +1,6 @@
-﻿<Application x:Class="Test_TaskbarTools.App"
+﻿<Application x:Class="TestTaskbarTools.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Test_TaskbarTools"
+             xmlns:local="clr-namespace:TestTaskbarTools"
              StartupUri="MainWindow.xaml">
 </Application>

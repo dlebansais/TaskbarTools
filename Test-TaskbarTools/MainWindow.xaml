@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Test_TaskbarTools"
+        xmlns:local="clr-namespace:TestTaskbarTools"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
@@ -15,6 +15,7 @@
         <RoutedCommand x:Key="CommandSetCloseIcon"/>
         <RoutedCommand x:Key="CommandEnable"/>
         <RoutedCommand x:Key="CommandDisable"/>
+        <RoutedCommand x:Key="CommandShowBalloon"/>
         <RoutedCommand x:Key="CommandChangeText"/>
         <RoutedCommand x:Key="CommandShow"/>
         <RoutedCommand x:Key="CommandHide"/>
@@ -32,6 +33,8 @@
             <MenuItem Header="Enable Close" Command="{StaticResource CommandEnable}"/>
             <MenuItem Header="Disable Close" Command="{StaticResource CommandDisable}"/>
             <Separator/>
+            <MenuItem Header="Show Balloon" Command="{StaticResource CommandShowBalloon}"/>
+            <Separator/>
             <MenuItem Header="Change Close Text" Command="{StaticResource CommandChangeText}"/>
             <MenuItem Header="Show Close" Command="{StaticResource CommandShow}"/>
             <MenuItem Header="Hide Close" Command="{StaticResource CommandHide}"/>
@@ -46,6 +49,7 @@
         <CommandBinding Command="{StaticResource CommandSetCloseIcon}" Executed="OnSetCloseIcon"/>
         <CommandBinding Command="{StaticResource CommandEnable}" Executed="OnEnable"/>
         <CommandBinding Command="{StaticResource CommandDisable}" Executed="OnDisable"/>
+        <CommandBinding Command="{StaticResource CommandShowBalloon}" Executed="OnShowBalloon"/>
         <CommandBinding Command="{StaticResource CommandChangeText}" Executed="OnChangeText"/>
         <CommandBinding Command="{StaticResource CommandShow}" Executed="OnShow"/>
         <CommandBinding Command="{StaticResource CommandHide}" Executed="OnHide"/>

@@ -12,8 +12,8 @@
     <Product />
     <Description>Create an icon on the Windows taskbar and manage its menu</Description>
     <Copyright></Copyright>
-    <AssemblyVersion>1.0.3.1</AssemblyVersion>
-    <FileVersion>1.0.3.1</FileVersion>
+    <AssemblyVersion>1.0.3.4</AssemblyVersion>
+    <FileVersion>1.0.3.2</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
   </PropertyGroup>
