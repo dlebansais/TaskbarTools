@@ -14,7 +14,7 @@
     <Copyright></Copyright>
     <AssemblyVersion>1.0.3.4</AssemblyVersion>
     <FileVersion>1.0.3.2</FileVersion>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
   </PropertyGroup>
 
