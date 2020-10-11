@@ -7,7 +7,7 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
-    <Version>1.0.3</Version>
+    <Version>1.1.0</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
@@ -15,7 +15,7 @@
     <Copyright>Copyright © David Le Bansais 2019</Copyright>
     <AssemblyVersion>1.0.3.4</AssemblyVersion>
     <FileVersion>1.0.3.4</FileVersion>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/dlebansais/CAcertInstall</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>TestTaskbarTools</RootNamespace>
