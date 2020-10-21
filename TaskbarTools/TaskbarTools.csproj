@@ -30,10 +30,6 @@
     <PackageReference Include="Contracts" Version="1.0.7" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'==''">
-    <PackageReference Include="Contracts" Version="1.0.7" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
