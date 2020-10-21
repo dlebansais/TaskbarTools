@@ -22,14 +22,6 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PackageReference Include="Contracts-Debug" Version="1.0.7" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PackageReference Include="Contracts" Version="1.0.7" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
@@ -55,6 +47,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Contracts-Debug" Version="1.0.7" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="Contracts" Version="1.0.7" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   </ItemGroup>
 
   <ItemGroup>
