@@ -14,8 +14,8 @@
     <Product />
     <Description>Test-TaskbarTools</Description>
     <Copyright>Copyright © David Le Bansais 2019</Copyright>
-    <AssemblyVersion>1.0.3.4</AssemblyVersion>
-    <FileVersion>1.0.3.4</FileVersion>
+    <AssemblyVersion>1.0.3.5</AssemblyVersion>
+    <FileVersion>1.0.3.5</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -32,6 +32,14 @@
     <EmbeddedResource Include="Idle-Enabled.ico" />
     <EmbeddedResource Include="moon.ico" />
     <EmbeddedResource Include="UAC-16.png" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PackageReference Include="Contracts-Debug" Version="1.0.6" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PackageReference Include="Contracts" Version="1.0.6" />
   </ItemGroup>
 
   <ItemGroup>
