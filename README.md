@@ -70,3 +70,17 @@ The icon is removed from the taskbar when you dispose of the `TaskbarIcon` objec
 
 To avoid declaring a nullable type, you can use the static value `TaskbarIcon.Empty`.
 
+## Taskbar Location
+
+This assembly also provides additional info about the location of the taskbar and its content.
+
+### TaskbarLocation.ScreenBounds
+
+This property gets the bounds of the current screen used to display the taskbar.
+
+### TaskbarLocation.GetRelativePosition
+
+	Point GetRelativePosition(FrameworkElement element);
+
+Return the position a FrameworkElement should take to be on the edge of the task bar (in screen coordinates). This is useful to display popups.
+
