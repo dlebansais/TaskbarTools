@@ -67,7 +67,7 @@ deploy:
     auth_token:
       secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
     artifact: $(APPVEYOR_PROJECT_NAME)
-    draft: true
+    draft: false
     prerelease: false
     on:
       branch: deployment
