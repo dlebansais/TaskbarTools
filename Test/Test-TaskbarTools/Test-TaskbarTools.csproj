@@ -52,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TaskbarTools\TaskbarTools.csproj" />
+    <ProjectReference Include="..\..\TaskbarTools\TaskbarTools.csproj" />
   </ItemGroup>
 
   <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" Condition="$(CopyLocalLockFileAssemblies) == true" AfterTargets="ResolveReferences">
