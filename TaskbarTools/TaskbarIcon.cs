@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Reflection;
     using System.Windows;
     using System.Windows.Forms;
     using System.Windows.Input;
@@ -269,20 +270,38 @@
         #region Implementation
         private static void SetNotifyIconText(NotifyIcon ni, string? text)
         {
-            Type t = typeof(NotifyIcon);
-            System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
-            t.GetField("text", hidden).SetValue(ni, text);
-            if ((bool)t.GetField("added", hidden).GetValue(ni))
-                t.GetMethod("UpdateIcon", hidden).Invoke(ni, new object[] { true });
+            SetNotifyIconValue(ni, "text", text);
         }
 
         private static void SetNotifyIcon(NotifyIcon ni, Icon icon)
         {
+            SetNotifyIconValue(ni, "icon", icon);
+        }
+
+        private static void SetNotifyIconValue(NotifyIcon ni, string valueName, object? value)
+        {
             Type t = typeof(NotifyIcon);
-            System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
-            t.GetField("icon", hidden).SetValue(ni, icon);
-            if ((bool)t.GetField("added", hidden).GetValue(ni))
-                t.GetMethod("UpdateIcon", hidden).Invoke(ni, new object[] { true });
+            BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
+
+            FieldInfo? FieldInfoNullable;
+            FieldInfo FieldInfo;
+
+            FieldInfoNullable = t.GetField(valueName, hidden);
+            Contract.RequireNotNull(FieldInfoNullable, out FieldInfo);
+
+            FieldInfo.SetValue(ni, value);
+
+            FieldInfoNullable = t.GetField("added", hidden);
+            Contract.RequireNotNull(FieldInfoNullable, out FieldInfo);
+
+            bool? IsAddedValue = (bool?)FieldInfo.GetValue(ni);
+            if (IsAddedValue.HasValue && IsAddedValue.Value == true)
+            {
+                MethodInfo? MethodInfoNullable = t.GetMethod("UpdateIcon", hidden);
+                Contract.RequireNotNull(MethodInfoNullable, out MethodInfo MethodInfo);
+
+                MethodInfo.Invoke(ni, new object[] { true });
+            }
         }
 
         private static ToolStripMenuItem GetMenuItemFromCommand(ICommand command)
@@ -306,7 +325,7 @@
         /// </summary>
         public event EventHandler? IconClicked;
 
-        private static void OnClick(object sender, EventArgs e)
+        private static void OnClick(object? sender, EventArgs e)
         {
             if (e is System.Windows.Forms.MouseEventArgs AsMouseEventArgs)
             {
@@ -337,7 +356,7 @@
             }
         }
 
-        private static void OnMenuClicked(object sender, EventArgs e)
+        private static void OnMenuClicked(object? sender, EventArgs e)
         {
             if (sender is ToolStripMenuItem MenuItem)
                 OnMenuClicked(MenuItem);

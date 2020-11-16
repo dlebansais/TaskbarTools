@@ -43,7 +43,7 @@
         #endregion
 
         #region Timers
-        private void TestTimerCallback(object parameter)
+        private void TestTimerCallback(object? parameter)
         {
             Dispatcher.Invoke(TestTimerDelegate);
         }
@@ -148,7 +148,7 @@
         private static Icon LoadResourceIcon(string resourceName)
         {
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TestTaskbarTools.{resourceName}"))
+            using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TestTaskbarTools.{resourceName}")!)
             {
                 Icon ResourceIcon = new Icon(ResourceStream);
                 return ResourceIcon;
@@ -158,7 +158,7 @@
         private static Bitmap LoadResourceBitmap(string resourceName)
         {
             Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-            using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TestTaskbarTools.{resourceName}"))
+            using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TestTaskbarTools.{resourceName}")!)
             {
                 Bitmap ResourceBitmap = new Bitmap(ResourceStream);
                 return ResourceBitmap;

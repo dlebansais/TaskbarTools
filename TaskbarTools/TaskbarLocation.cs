@@ -20,7 +20,7 @@
             SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
         }
 
-        private static void OnDisplaySettingsChanged(object sender, EventArgs e)
+        private static void OnDisplaySettingsChanged(object? sender, EventArgs e)
         {
             UpdateLocation();
         }

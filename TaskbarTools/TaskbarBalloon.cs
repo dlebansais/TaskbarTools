@@ -98,31 +98,31 @@
 
         private static List<BallonPrivateData> DisplayedBalloonList = new List<BallonPrivateData>();
 
-        private static void OnClosed(object sender, EventArgs e)
+        private static void OnClosed(object? sender, EventArgs e)
         {
             BallonCloseHandler(sender);
         }
 
-        private static void OnClicked(object sender, EventArgs e)
-        {
-            BallonClickHandler(sender);
-            BallonCloseHandler(sender);
-        }
-
-        private static void OnMouseClicked(object sender, MouseEventArgs e)
+        private static void OnClicked(object? sender, EventArgs e)
         {
             BallonClickHandler(sender);
             BallonCloseHandler(sender);
         }
 
-        private static void BallonClickHandler(object sender)
+        private static void OnMouseClicked(object? sender, MouseEventArgs e)
+        {
+            BallonClickHandler(sender);
+            BallonCloseHandler(sender);
+        }
+
+        private static void BallonClickHandler(object? sender)
         {
             if (sender is NotifyIcon Notification && Notification.Tag is BallonPrivateData Data)
                 if (Data.GetClickHandler(out Action<object> ClickHandler, out object ClickData))
                     ClickHandler.Invoke(ClickData);
         }
 
-        private static void BallonCloseHandler(object sender)
+        private static void BallonCloseHandler(object? sender)
         {
             if (sender is NotifyIcon Notification)
             {
