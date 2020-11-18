@@ -41,8 +41,8 @@
             {
                 TaskbarHandle = hwnd;
 
-                NativeMethods.RECT TrayRect, NotificationAreaRect, IconAreaRect;
-                if (GetSystemTrayRect(out TrayRect, out NotificationAreaRect, out IconAreaRect))
+                NativeMethods.RECT TrayRect;
+                if (GetSystemTrayRect(out TrayRect, out _, out _))
                 {
                     System.Drawing.Rectangle TrayDrawingRect = new System.Drawing.Rectangle(TrayRect.Left, TrayRect.Top, TrayRect.Right - TrayRect.Left, TrayRect.Bottom - TrayRect.Top);
                     Dictionary<Screen, int> AreaTable = new Dictionary<Screen, int>();
@@ -60,13 +60,11 @@
                     int SmallestPositiveArea = 0;
 
                     foreach (KeyValuePair<Screen, int> Entry in AreaTable)
-                    {
                         if (SelectedScreen == null || (Entry.Value > 0 && (SmallestPositiveArea == 0 || SmallestPositiveArea > Entry.Value)))
                         {
                             SelectedScreen = Entry.Key;
                             SmallestPositiveArea = Entry.Value;
                         }
-                    }
 
                     CurrentScreen = SelectedScreen;
                 }
@@ -121,8 +119,8 @@
         // to be on the edge of the task bar. In screen coordinates.
         private static Point GetRelativePosition(Point position, Size size)
         {
-            NativeMethods.RECT TrayRect, NotificationAreaRect, IconAreaRect;
-            if (CurrentScreen == null || !GetSystemTrayRect(out TrayRect, out NotificationAreaRect, out IconAreaRect))
+            NativeMethods.RECT TrayRect;
+            if (CurrentScreen == null || !GetSystemTrayRect(out TrayRect, out _, out _))
                 return new Point(0, 0);
 
             // Use the full taskbar rectangle.

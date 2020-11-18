@@ -40,7 +40,7 @@
         /// <summary>
         /// Gets the list of icons added to the taskbar with this API.
         /// </summary>
-        protected static List<TaskbarIcon> ActiveIconList { get; private set; } = new List<TaskbarIcon>();
+        protected static List<TaskbarIcon> ActiveIconList { get; } = new List<TaskbarIcon>();
 
         private readonly NotifyIcon NotifyIcon;
         private readonly IInputElement? Target;
