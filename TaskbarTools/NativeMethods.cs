@@ -1,4 +1,4 @@
-﻿namespace TaskbarIconHost
+﻿namespace TaskbarTools
 {
     using System;
     using System.Runtime.InteropServices;
