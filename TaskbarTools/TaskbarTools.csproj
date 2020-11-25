@@ -8,14 +8,14 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
     <Description>Create an icon on the Windows taskbar and manage its menu</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.4.0.15</AssemblyVersion>
-    <FileVersion>1.4.0.14</FileVersion>
+    <AssemblyVersion>1.4.1.15</AssemblyVersion>
+    <FileVersion>1.4.1.14</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
@@ -82,8 +82,10 @@
     <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64' And '$(TargetFramework)'!='net5.0-windows'" />
     <Exec Command="if not exist &quot;$(SolutionDir)nuget\lib\net5.0&quot; mkdir &quot;$(SolutionDir)nuget\lib\net5.0&quot;" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'=='net5.0-windows'" />
     <Exec Command="if not exist &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot; mkdir &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot;" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'!='net5.0-windows'" />
-    <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)nuget\lib\net5.0\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'=='net5.0-windows'" />
-    <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'!='net5.0-windows'" />
+    <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*.dll&quot; &quot;$(SolutionDir)nuget\lib\net5.0\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'=='net5.0-windows'" />
+    <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*.xml&quot; &quot;$(SolutionDir)nuget\lib\net5.0\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'=='net5.0-windows'" />
+    <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*.dll&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'!='net5.0-windows'" />
+    <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*.xml&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64' And '$(TargetFramework)'!='net5.0-windows'" />
   </Target>
 
 </Project>
