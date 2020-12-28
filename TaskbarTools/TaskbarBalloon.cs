@@ -43,10 +43,9 @@
         public static void Show(string text, TimeSpan delay, TimeSpan delayWait)
         {
             using NotifyIcon Notification = new NotifyIcon() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) };
-#pragma warning disable CA2000 // Dispose objects before losing scope
             BallonPrivateData Data = new BallonPrivateData(Notification);
-#pragma warning restore CA2000 // Dispose objects before losing scope
-            Show(delay, Notification, Data);
+            InitializeNotification(delay, Notification, Data);
+            DisplayedBalloonList.Add(Data);
 
             Thread.Sleep(delayWait);
         }
@@ -61,10 +60,9 @@
         public static void Show(string text, TimeSpan delay, Action<object> clickHandler, object clickData)
         {
             NotifyIcon Notification = new NotifyIcon() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) };
-#pragma warning disable CA2000 // Dispose objects before losing scope
             BallonPrivateData Data = new BallonPrivateData(Notification, clickHandler, clickData);
-#pragma warning restore CA2000 // Dispose objects before losing scope
-            Show(delay, Notification, Data);
+            InitializeNotification(delay, Notification, Data);
+            DisplayedBalloonList.Add(Data);
         }
         #endregion
 
@@ -77,7 +75,7 @@
                 return text;
         }
 
-        private static void Show(TimeSpan delay, NotifyIcon notification, BallonPrivateData data)
+        private static void InitializeNotification(TimeSpan delay, NotifyIcon notification, BallonPrivateData data)
         {
             try
             {
@@ -87,7 +85,6 @@
                 notification.Click += new EventHandler(OnClicked);
                 notification.MouseClick += new MouseEventHandler(OnMouseClicked);
                 notification.ShowBalloonTip((int)delay.TotalMilliseconds);
-                DisplayedBalloonList.Add(data);
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch
@@ -133,10 +130,15 @@
                     Notification.Tag = null;
                     DisplayedBalloonList.Remove(Data);
                     Data.Closed();
-                    using BallonPrivateData CloseData = Data;
+
+                    using (Data)
+                    {
+                    }
                 }
 
-                using NotifyIcon CloseNotification = Notification;
+                using (Notification)
+                {
+                }
             }
         }
 
@@ -157,7 +159,7 @@
 
             public NotifyIcon? Notification { get; private set; }
             public Action<object>? ClickHandler { get; private set; }
-            public object ClickData { get; }
+            public object ClickData { get; init; }
             public bool IsClosed { get; private set; }
 
             public void Closed()

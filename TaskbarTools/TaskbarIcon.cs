@@ -186,11 +186,7 @@
             Contract.RequireNotNull(command, out ICommand Command);
 
             ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
-
-            if (bitmap != null)
-                MenuItem.Image = bitmap;
-            else
-                MenuItem.Image = null;
+            MenuItem.Image = bitmap;
         }
 
         /// <summary>
@@ -283,24 +279,16 @@
             Type t = typeof(NotifyIcon);
             BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
 
-            FieldInfo? FieldInfoNullable;
-            FieldInfo FieldInfo;
+            Contract.RequireNotNull(t.GetField(valueName, hidden), out FieldInfo FieldInfoName);
+            FieldInfoName.SetValue(ni, value);
 
-            FieldInfoNullable = t.GetField(valueName, hidden);
-            Contract.RequireNotNull(FieldInfoNullable, out FieldInfo);
+            Contract.RequireNotNull(t.GetField("added", hidden), out FieldInfo FieldInfoIsAdded);
+            bool? IsAddedValue = (bool?)FieldInfoIsAdded.GetValue(ni);
 
-            FieldInfo.SetValue(ni, value);
-
-            FieldInfoNullable = t.GetField("added", hidden);
-            Contract.RequireNotNull(FieldInfoNullable, out FieldInfo);
-
-            bool? IsAddedValue = (bool?)FieldInfo.GetValue(ni);
             if (IsAddedValue.HasValue && IsAddedValue.Value == true)
             {
-                MethodInfo? MethodInfoNullable = t.GetMethod("UpdateIcon", hidden);
-                Contract.RequireNotNull(MethodInfoNullable, out MethodInfo MethodInfo);
-
-                MethodInfo.Invoke(ni, new object[] { true });
+                Contract.RequireNotNull(t.GetMethod("UpdateIcon", hidden), out MethodInfo MethodInfoUpdateIcon);
+                MethodInfoUpdateIcon.Invoke(ni, new object[] { true });
             }
         }
 
@@ -347,11 +335,11 @@
             switch (button)
             {
                 case MouseButtons.Left:
-                    IconClicked?.Invoke(this, new EventArgs());
+                    IconClicked?.Invoke(this, EventArgs.Empty);
                     break;
 
                 case MouseButtons.Right:
-                    MenuOpening?.Invoke(this, new EventArgs());
+                    MenuOpening?.Invoke(this, EventArgs.Empty);
                     break;
             }
         }

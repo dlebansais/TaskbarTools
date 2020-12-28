@@ -36,39 +36,37 @@
             TaskbarHandle = IntPtr.Zero;
             CurrentScreen = null;
 
-            IntPtr hwnd;
-            if (GetSystemTrayHandle(out hwnd))
+            if (!GetSystemTrayHandle(out IntPtr hwnd))
+                return;
+
+            TaskbarHandle = hwnd;
+
+            if (!GetSystemTrayRect(out NativeMethods.RECT TrayRect, out _, out _))
+                return;
+
+            System.Drawing.Rectangle TrayDrawingRect = new System.Drawing.Rectangle(TrayRect.Left, TrayRect.Top, TrayRect.Right - TrayRect.Left, TrayRect.Bottom - TrayRect.Top);
+            Dictionary<Screen, int> AreaTable = new Dictionary<Screen, int>();
+
+            foreach (Screen Screen in Screen.AllScreens)
             {
-                TaskbarHandle = hwnd;
+                System.Drawing.Rectangle ScreenDrawingRect = Screen.Bounds;
+                ScreenDrawingRect.Intersect(TrayDrawingRect);
+                int IntersectionArea = ScreenDrawingRect.Width * ScreenDrawingRect.Height;
 
-                NativeMethods.RECT TrayRect;
-                if (GetSystemTrayRect(out TrayRect, out _, out _))
-                {
-                    System.Drawing.Rectangle TrayDrawingRect = new System.Drawing.Rectangle(TrayRect.Left, TrayRect.Top, TrayRect.Right - TrayRect.Left, TrayRect.Bottom - TrayRect.Top);
-                    Dictionary<Screen, int> AreaTable = new Dictionary<Screen, int>();
-
-                    foreach (Screen s in Screen.AllScreens)
-                    {
-                        System.Drawing.Rectangle ScreenDrawingRect = s.Bounds;
-                        ScreenDrawingRect.Intersect(TrayDrawingRect);
-                        int IntersectionArea = ScreenDrawingRect.Width * ScreenDrawingRect.Height;
-
-                        AreaTable.Add(s, IntersectionArea);
-                    }
-
-                    Screen? SelectedScreen = null;
-                    int SmallestPositiveArea = 0;
-
-                    foreach (KeyValuePair<Screen, int> Entry in AreaTable)
-                        if (SelectedScreen == null || (Entry.Value > 0 && (SmallestPositiveArea == 0 || SmallestPositiveArea > Entry.Value)))
-                        {
-                            SelectedScreen = Entry.Key;
-                            SmallestPositiveArea = Entry.Value;
-                        }
-
-                    CurrentScreen = SelectedScreen;
-                }
+                AreaTable.Add(Screen, IntersectionArea);
             }
+
+            Screen? SelectedScreen = null;
+            int SmallestPositiveArea = 0;
+
+            foreach (KeyValuePair<Screen, int> Entry in AreaTable)
+                if (SelectedScreen == null || (Entry.Value > 0 && (SmallestPositiveArea == 0 || SmallestPositiveArea > Entry.Value)))
+                {
+                    SelectedScreen = Entry.Key;
+                    SmallestPositiveArea = Entry.Value;
+                }
+
+            CurrentScreen = SelectedScreen;
         }
 
         private static IntPtr TaskbarHandle;
@@ -91,7 +89,9 @@
         /// <returns>The position <paramref name="element"/> should be at to be on the side where the taskbar is.</returns>
         public static Point GetRelativePosition(FrameworkElement element)
         {
-            if (element == null || double.IsNaN(element.ActualWidth) || double.IsNaN(element.ActualHeight) || ScreenBounds.IsEmpty)
+            Contracts.Contract.RequireNotNull(element, out FrameworkElement Element);
+
+            if (double.IsNaN(Element.ActualWidth) || double.IsNaN(Element.ActualHeight) || ScreenBounds.IsEmpty)
                 return new Point(double.NaN, double.NaN);
 
             System.Drawing.Point FormsMousePosition = Control.MousePosition;
@@ -107,8 +107,8 @@
             double RatioX = WorkScreenWidth / CurrentScreenWidth;
             double RatioY = WorkScreenHeight / CurrentScreenHeight;
 
-            Size PopupSize = new Size((int)(element.ActualWidth / RatioX), (int)(element.ActualHeight / RatioY));
-            Point RelativePosition = TaskbarLocation.GetRelativePosition(MousePosition, PopupSize);
+            Size PopupSize = new Size((int)(Element.ActualWidth / RatioX), (int)(Element.ActualHeight / RatioY));
+            Point RelativePosition = GetRelativePosition(MousePosition, PopupSize);
 
             RelativePosition = new Point(RelativePosition.X * RatioX, RelativePosition.Y * RatioY);
 
@@ -119,8 +119,7 @@
         // to be on the edge of the task bar. In screen coordinates.
         private static Point GetRelativePosition(Point position, Size size)
         {
-            NativeMethods.RECT TrayRect;
-            if (CurrentScreen == null || !GetSystemTrayRect(out TrayRect, out _, out _))
+            if (CurrentScreen == null || !GetSystemTrayRect(out NativeMethods.RECT TrayRect, out _, out _))
                 return new Point(0, 0);
 
             // Use the full taskbar rectangle.

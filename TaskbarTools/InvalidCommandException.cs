@@ -23,7 +23,7 @@
         /// <summary>
         /// Gets the invalid command.
         /// </summary>
-        public ICommand Command { get; }
+        public ICommand Command { get; init; }
     }
 #pragma warning restore CA2237 // Mark ISerializable types with SerializableAttribute
 #pragma warning restore CA1032 // Implement standard exception constructors

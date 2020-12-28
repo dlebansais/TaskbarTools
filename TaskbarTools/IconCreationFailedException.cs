@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
         internal IconCreationFailedException(Exception innerException)
-            : base(innerException?.Message, innerException)
+            : base(innerException.Message, innerException)
         {
         }
     }
