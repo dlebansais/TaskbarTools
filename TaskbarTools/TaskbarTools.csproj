@@ -14,8 +14,8 @@
     <Product />
     <Description>Create an icon on the Windows taskbar and manage its menu</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.4.1.16</AssemblyVersion>
-    <FileVersion>1.4.1.15</FileVersion>
+    <AssemblyVersion>1.4.1.17</AssemblyVersion>
+    <FileVersion>1.4.1.16</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>

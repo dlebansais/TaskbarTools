@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Windows;
     using System.Windows.Forms;
+    using Contracts;
     using Microsoft.Win32;
 
     /// <summary>
@@ -89,7 +90,7 @@
         /// <returns>The position <paramref name="element"/> should be at to be on the side where the taskbar is.</returns>
         public static Point GetRelativePosition(FrameworkElement element)
         {
-            Contracts.Contract.RequireNotNull(element, out FrameworkElement Element);
+            Contract.RequireNotNull(element, out FrameworkElement Element);
 
             if (double.IsNaN(Element.ActualWidth) || double.IsNaN(Element.ActualHeight) || ScreenBounds.IsEmpty)
                 return new Point(double.NaN, double.NaN);
