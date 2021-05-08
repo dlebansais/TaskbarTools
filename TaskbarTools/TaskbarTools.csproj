@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
@@ -14,10 +14,16 @@
     <Product />
     <Description>Create an icon on the Windows taskbar and manage its menu</Description>
     <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.4.1.17</AssemblyVersion>
-    <FileVersion>1.4.1.16</FileVersion>
+    <AssemblyVersion>1.4.1.18</AssemblyVersion>
+    <FileVersion>1.4.1.17</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <RootNamespace>TaskbarTools</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>SA0001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -176,6 +176,7 @@
         #endregion
 
         #region Implementation of IDisposable
+
         /// <summary>
         /// Called when an object should release its resources.
         /// </summary>
