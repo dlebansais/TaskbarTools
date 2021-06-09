@@ -214,7 +214,7 @@
 
             // Various versions of windows have length limitations (documented as usual).
             // We remove extra lines until it works...
-            for (; ;)
+            while (true)
             {
                 try
                 {
