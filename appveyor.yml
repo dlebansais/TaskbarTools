@@ -18,7 +18,7 @@ init:
 
 environment:
   package_token:
-    secure: bpUW4FC8f65OAKq9z31b95q6rDsYG7R9QR39MNe7u0mmgEugA+0WOw5+Zrw5kh4Z
+    secure: 95GbzPvGGiBrNF4Ymi2UXoCoTljv9YUUi1uerCmrQA8WqvJpvs+oFw+KqJcK6nqv
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
@@ -63,7 +63,7 @@ deploy:
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
     username: dlebansais
     api_key:
-      secure: GOksqNi8I7Vs6dcsfosJvSa9vMaZH3zLQJjnx+ruJy6ZeLF075mifj4MdRI34E8W
+      secure: KbDEwWE4UywuT0ZzvguZUw6jh44+YJ9KSk92qwnPX2z+QGzkuLO0AokyktIWmiFI
     on:
       branch: deployment
       configuration: Debug
@@ -73,7 +73,7 @@ deploy:
     skip_symbols: true
     username: dlebansais
     api_key:
-      secure: GOksqNi8I7Vs6dcsfosJvSa9vMaZH3zLQJjnx+ruJy6ZeLF075mifj4MdRI34E8W
+      secure: KbDEwWE4UywuT0ZzvguZUw6jh44+YJ9KSk92qwnPX2z+QGzkuLO0AokyktIWmiFI
     on:
       branch: deployment
       configuration: Release
