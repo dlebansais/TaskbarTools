@@ -10,7 +10,7 @@ branches:
 skip_commits:
   message: "*[skip ci]*"
 
-image: Visual Studio 2019
+image: Visual Studio 2022
 
 # scripts that are called at very beginning, before repo cloning
 init:
@@ -18,7 +18,7 @@ init:
 
 environment:
   package_token:
-    secure: 95GbzPvGGiBrNF4Ymi2UXoCoTljv9YUUi1uerCmrQA8WqvJpvs+oFw+KqJcK6nqv
+    secure: MvF+AGj2M3nN6iIqDZHxHsDOr6QcqKPhf6xaLwzWpukS+UFiaRDnjum5Rui0AiyF
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
