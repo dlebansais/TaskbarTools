@@ -9,14 +9,14 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.4.1</Version>
+    <Version>1.4.2</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
     <Description>Test-TaskbarTools</Description>
     <Copyright>Copyright © David Le Bansais 2019</Copyright>
-    <AssemblyVersion>1.4.1.19</AssemblyVersion>
-    <FileVersion>1.4.1.9</FileVersion>
+    <AssemblyVersion>1.4.2.19</AssemblyVersion>
+    <FileVersion>1.4.2.9</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
