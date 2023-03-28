@@ -171,14 +171,7 @@ public static class TaskbarLocation
 
     private static TaskBarLocation GetTaskBarLocation(NativeMethods.RECT taskbarRect)
     {
-        Point TaskbarCenter = GetTaskBarRectCenter(taskbarRect);
-
-        int? WorkingAreaWidthQuarter = GetWorkingAreaWidthQuarter();
-        int? WorkingAreaHeightQuarter = GetWorkingAreaHeightQuarter();
-        bool IsLeft = TaskbarCenter.X < CurrentScreen?.WorkingArea.Left + WorkingAreaWidthQuarter;
-        bool IsRight = TaskbarCenter.X >= CurrentScreen?.WorkingArea.Right - WorkingAreaWidthQuarter;
-        bool IsTop = TaskbarCenter.Y < CurrentScreen?.WorkingArea.Top + WorkingAreaHeightQuarter;
-        bool IsBottom = TaskbarCenter.Y >= CurrentScreen?.WorkingArea.Bottom - WorkingAreaHeightQuarter;
+        GetQuadrant(taskbarRect, out bool IsLeft, out bool IsRight, out bool IsTop, out bool IsBottom);
 
         if (IsTop && !IsLeft && !IsRight)
             return TaskBarLocation.Top;
@@ -190,6 +183,18 @@ public static class TaskbarLocation
             return TaskBarLocation.Right;
         else
             return TaskBarLocation.Bottom;
+    }
+
+    private static void GetQuadrant(NativeMethods.RECT taskbarRect, out bool isLeft, out bool isRight, out bool isTop, out bool isBottom)
+    {
+        Point TaskbarCenter = GetTaskBarRectCenter(taskbarRect);
+
+        int? WorkingAreaWidthQuarter = GetWorkingAreaWidthQuarter();
+        int? WorkingAreaHeightQuarter = GetWorkingAreaHeightQuarter();
+        isLeft = TaskbarCenter.X < CurrentScreen?.WorkingArea.Left + WorkingAreaWidthQuarter;
+        isRight = TaskbarCenter.X >= CurrentScreen?.WorkingArea.Right - WorkingAreaWidthQuarter;
+        isTop = TaskbarCenter.Y < CurrentScreen?.WorkingArea.Top + WorkingAreaHeightQuarter;
+        isBottom = TaskbarCenter.Y >= CurrentScreen?.WorkingArea.Bottom - WorkingAreaHeightQuarter;
     }
 
     private static Point GetTaskBarRectCenter(NativeMethods.RECT taskbarRect)
