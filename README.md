@@ -1,7 +1,7 @@
 # TaskbarTools
 Create an icon on the Windows taskbar and manage its menu.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/pit8rfvu7s3pxg79?svg=true)](https://ci.appveyor.com/project/dlebansais/taskbartools) [![CodeFactor](https://www.codefactor.io/repository/github/dlebansais/taskbartools/badge)](https://www.codefactor.io/repository/github/dlebansais/taskbartools)
+[![Build status](https://ci.appveyor.com/api/projects/status/pit8rfvu7s3pxg79?svg=true)](https://ci.appveyor.com/project/dlebansais/taskbartools) [![CodeFactor](https://www.codefactor.io/repository/github/dlebansais/taskbartools/badge)](https://www.codefactor.io/repository/github/dlebansais/taskbartools)  [![NuGet](https://img.shields.io/nuget/v/TaskbarTools.svg)](https://www.nuget.org/packages/TaskbarTools)
 
 ## Requirements
 
