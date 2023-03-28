@@ -20,4 +20,3 @@ public class IconCreationFailedException : Exception
 }
 #pragma warning restore CA2237 // Mark ISerializable types with SerializableAttribute
 #pragma warning restore CA1032 // Implement standard exception constructors
-

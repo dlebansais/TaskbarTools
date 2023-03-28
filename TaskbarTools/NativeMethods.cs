@@ -41,4 +41,3 @@ internal class NativeMethods
     }
 }
 #pragma warning restore SA1600 // Elements should be documented
-
