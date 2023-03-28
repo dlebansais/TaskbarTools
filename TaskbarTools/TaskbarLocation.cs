@@ -171,12 +171,10 @@ public static class TaskbarLocation
 
     private static TaskBarLocation GetTaskBarLocation(NativeMethods.RECT taskbarRect)
     {
-        double RectCenterX = (taskbarRect.Left + taskbarRect.Right) / 2;
-        double RectCenterY = (taskbarRect.Top + taskbarRect.Bottom) / 2;
-        Point TaskbarCenter = new Point(RectCenterX, RectCenterY);
+        Point TaskbarCenter = GetTaskBarRectCenter(taskbarRect);
 
-        int? WorkingAreaWidthQuarter = (CurrentScreen?.WorkingArea.Right - CurrentScreen?.WorkingArea.Left) / 4;
-        int? WorkingAreaHeightQuarter = (CurrentScreen?.WorkingArea.Bottom - CurrentScreen?.WorkingArea.Top) / 4;
+        int? WorkingAreaWidthQuarter = GetWorkingAreaWidthQuarter();
+        int? WorkingAreaHeightQuarter = GetWorkingAreaHeightQuarter();
         bool IsLeft = TaskbarCenter.X < CurrentScreen?.WorkingArea.Left + WorkingAreaWidthQuarter;
         bool IsRight = TaskbarCenter.X >= CurrentScreen?.WorkingArea.Right - WorkingAreaWidthQuarter;
         bool IsTop = TaskbarCenter.Y < CurrentScreen?.WorkingArea.Top + WorkingAreaHeightQuarter;
@@ -192,6 +190,23 @@ public static class TaskbarLocation
             return TaskBarLocation.Right;
         else
             return TaskBarLocation.Bottom;
+    }
+
+    private static Point GetTaskBarRectCenter(NativeMethods.RECT taskbarRect)
+    {
+        double RectCenterX = (taskbarRect.Left + taskbarRect.Right) / 2;
+        double RectCenterY = (taskbarRect.Top + taskbarRect.Bottom) / 2;
+        return new Point(RectCenterX, RectCenterY);
+    }
+
+    private static int? GetWorkingAreaWidthQuarter()
+    {
+        return (CurrentScreen?.WorkingArea.Right - CurrentScreen?.WorkingArea.Left) / 4;
+    }
+
+    private static int? GetWorkingAreaHeightQuarter()
+    {
+        return (CurrentScreen?.WorkingArea.Bottom - CurrentScreen?.WorkingArea.Top) / 4;
     }
 
     private static void AlignedToLeft(Point position, Size size, NativeMethods.RECT taskbarRect, out double x, out double y)
