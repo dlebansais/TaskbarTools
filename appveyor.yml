@@ -49,7 +49,8 @@ after_build:
         $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
   - ps: $version=$xml.Project.PropertyGroup.Version
   - ps: set version_tag v$version
-  - ps: $env:VERSION_TAG=$version_tag.TrimEnd
+  - ps: $version_tag=$version_tag.Trim()
+  - ps: $env:VERSION_TAG=$version_tag
   - echo Version is "%VERSION_TAG%"
 
 test: off
