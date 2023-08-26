@@ -8,14 +8,14 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.4.3</Version>
+    <Version>1.4.4</Version>
     <Authors>David Le Bansais</Authors>
     <Company />
     <Product />
     <Description>Create an icon on the Windows taskbar and manage its menu</Description>
-    <Copyright>Copyright © 2019 David Le Bansais</Copyright>
-    <AssemblyVersion>1.4.3.20</AssemblyVersion>
-    <FileVersion>1.4.3.20</FileVersion>
+    <Copyright>Copyright © 2023 David Le Bansais</Copyright>
+    <AssemblyVersion>1.4.4.21</AssemblyVersion>
+    <FileVersion>1.4.4.21</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>TaskbarTools</RootNamespace>
@@ -32,11 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.435">
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.507">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="PolySharp" Version="1.13.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
