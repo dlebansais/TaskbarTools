@@ -45,6 +45,9 @@ after_build:
   - if exist nuget\%APPVEYOR_PROJECT_NAME%.nuspec nuget pack nuget\%APPVEYOR_PROJECT_NAME%.nuspec
   - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --debug'                         # Execute the packager: the output is nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
   - if exist nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
+  - ps: |-
+        $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
+  - ps: $version = $xml.Project.PropertyGroup.Version
   - ps: set version_tag v$version
   - ps: $env:VERSION_TAG=$version_tag
   - echo "Version is %VERSION_TAG%"
@@ -74,7 +77,6 @@ deploy:
   - provider: NuGet
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
     skip_symbols: true
-    username: dlebansais
     api_key:
       secure: gmxGdYXre5ryN4BlRVa0qJM++Sw86tRiKT4hpH5/OTK2daKRpeiOxFsVWpPLGJ+e
     on:
