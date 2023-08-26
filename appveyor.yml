@@ -47,10 +47,10 @@ after_build:
   - if exist nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
   - ps: |-
         $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
-  - ps: $version = $xml.Project.PropertyGroup.Version
+  - ps: $version=$xml.Project.PropertyGroup.Version
   - ps: set version_tag v$version
   - ps: $env:VERSION_TAG=$version_tag
-  - echo "Version is %VERSION_TAG%"
+  - echo Version is "%VERSION_TAG%"
 
 test: off
 
@@ -68,17 +68,38 @@ deploy:
     description: 'Automatic deployment'
     auth_token:
       secure: cDRPl/yROuN4QIJVzPcoIuWbKvPNjgGJJX/8Z+5s4ZKix123RUJieQvJVm6JYBGM
-    artifact: $(APPVEYOR_PROJECT_NAME)-Package-*
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
     draft: false
     prerelease: false
     on:
       branch: deployment
       configuration: Release
+  - provider: GitHub
+    release: $(VERSION_TAG)
+    description: 'Automatic deployment'
+    auth_token:
+      secure: cDRPl/yROuN4QIJVzPcoIuWbKvPNjgGJJX/8Z+5s4ZKix123RUJieQvJVm6JYBGM
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
+    draft: false
+    prerelease: false
+    on:
+      branch: deployment
+      configuration: Debug
   - provider: NuGet
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
     skip_symbols: true
     api_key:
       secure: gmxGdYXre5ryN4BlRVa0qJM++Sw86tRiKT4hpH5/OTK2daKRpeiOxFsVWpPLGJ+e
+    on:
+      branch: deployment
+      configuration: Release
+  - provider: NuGet
+    server: https://nuget.pkg.github.com/dlebansais/index.json
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
+    skip_symbols: true
+    username: dlebansais
+    api_key:
+      secure: GJOgNQLOuHBXfW2wXBaMXudFnnJDNI3od5hh9LFi1brPRK81RiLcbEW9hFbT8rIN
     on:
       branch: deployment
       configuration: Release
@@ -92,13 +113,3 @@ deploy:
     on:
       branch: deployment
       configuration: Debug
-  - provider: NuGet
-    server: https://nuget.pkg.github.com/dlebansais/index.json
-    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
-    skip_symbols: true
-    username: dlebansais
-    api_key:
-      secure: GJOgNQLOuHBXfW2wXBaMXudFnnJDNI3od5hh9LFi1brPRK81RiLcbEW9hFbT8rIN
-    on:
-      branch: deployment
-      configuration: Release
