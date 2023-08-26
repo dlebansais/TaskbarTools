@@ -45,6 +45,9 @@ after_build:
   - if exist nuget\%APPVEYOR_PROJECT_NAME%.nuspec nuget pack nuget\%APPVEYOR_PROJECT_NAME%.nuspec
   - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --debug'                         # Execute the packager: the output is nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
   - if exist nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
+  - ps: set version_tag v$version
+  - ps: $env:VERSION_TAG=$version_tag
+  - echo "Version is %VERSION_TAG%"
 
 test: off
 
@@ -57,6 +60,26 @@ artifacts:
     type: NuGetPackage
 
 deploy:
+  - provider: GitHub
+    release: $(VERSION_TAG)
+    description: 'Automatic deployment'
+    auth_token:
+      secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-*
+    draft: false
+    prerelease: false
+    on:
+      branch: deployment
+      configuration: Release
+  - provider: NuGet
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
+    skip_symbols: true
+    username: dlebansais
+    api_key:
+      secure: gmxGdYXre5ryN4BlRVa0qJM++Sw86tRiKT4hpH5/OTK2daKRpeiOxFsVWpPLGJ+e
+    on:
+      branch: deployment
+      configuration: Release
   - provider: NuGet
     server: https://nuget.pkg.github.com/dlebansais/index.json
     symbol_server: https://nuget.pkg.github.com/dlebansais/index.json
