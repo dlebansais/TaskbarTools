@@ -195,9 +195,7 @@ public class TaskbarIcon : IDisposable
     /// <param name="icon">The new icon displayed. The caller is responsible for releasing it as well as the old icon.</param>
     public void UpdateIcon(Icon icon)
     {
-#pragma warning disable CA2000 // Dispose objects before losing scope
-        Contract.RequireNotNull(icon, out Icon Icon);
-#pragma warning restore CA2000 // Dispose objects before losing scope
+        Icon Icon = Contract.RequireNotNull(icon);
 
         AssertNotEmpty();
 
