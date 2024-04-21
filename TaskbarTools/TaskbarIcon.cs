@@ -22,7 +22,7 @@ public class TaskbarIcon : IDisposable
 
     private TaskbarIcon()
     {
-        NotifyIcon = new NotifyIcon();
+        NotifyIconField = new NotifyIcon();
         Target = Keyboard.FocusedElement;
     }
 
@@ -33,16 +33,16 @@ public class TaskbarIcon : IDisposable
     /// <param name="target">The target input element for menu interaction. Can be null.</param>
     protected TaskbarIcon(NotifyIcon notifyIcon, IInputElement? target)
     {
-        NotifyIcon = notifyIcon;
+        NotifyIconField = notifyIcon;
         Target = target;
     }
 
     /// <summary>
     /// Gets the list of icons added to the taskbar with this API.
     /// </summary>
-    protected static List<TaskbarIcon> ActiveIconList { get; } = new List<TaskbarIcon>();
+    protected static IList<TaskbarIcon> ActiveIconList { get; } = new List<TaskbarIcon>();
 
-    private readonly NotifyIcon NotifyIcon;
+    private readonly NotifyIcon NotifyIconField;
     private readonly IInputElement? Target;
     #endregion
 
@@ -170,7 +170,7 @@ public class TaskbarIcon : IDisposable
 
         ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
 
-        if (icon != null)
+        if (icon is not null)
             MenuItem.Image = icon.ToBitmap();
         else
             MenuItem.Image = null;
@@ -201,7 +201,7 @@ public class TaskbarIcon : IDisposable
 
         AssertNotEmpty();
 
-        SetNotifyIcon(NotifyIcon, Icon);
+        SetNotifyIcon(NotifyIconField, Icon);
     }
 
     /// <summary>
@@ -218,14 +218,14 @@ public class TaskbarIcon : IDisposable
         {
             try
             {
-                SetNotifyIconText(NotifyIcon, toolTipText);
+                SetNotifyIconText(NotifyIconField, toolTipText);
                 return;
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch
 #pragma warning restore CA1031 // Do not catch general exception types
             {
-                if (toolTipText != null && toolTipText.Length > 0)
+                if (toolTipText is not null && toolTipText.Length > 0)
                 {
                     string[] Split = toolTipText.Split('\r');
 
@@ -266,23 +266,23 @@ public class TaskbarIcon : IDisposable
     #region Implementation
     private static void SetNotifyIconText(NotifyIcon ni, string? text)
     {
-        SetNotifyIconValue(ni, "text", text);
+        SetNotifyIconValue(ni, ToFrameworkSpecificFieldName("text"), text);
     }
 
     private static void SetNotifyIcon(NotifyIcon ni, Icon icon)
     {
-        SetNotifyIconValue(ni, "icon", icon);
+        SetNotifyIconValue(ni, ToFrameworkSpecificFieldName("icon"), icon);
     }
 
     private static void SetNotifyIconValue(NotifyIcon ni, string valueName, object? value)
     {
         Type t = typeof(NotifyIcon);
-        BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
+        const BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
 
         Contract.RequireNotNull(t.GetField(valueName, hidden), out FieldInfo FieldInfoName);
         FieldInfoName.SetValue(ni, value);
 
-        Contract.RequireNotNull(t.GetField("added", hidden), out FieldInfo FieldInfoIsAdded);
+        Contract.RequireNotNull(t.GetField(ToFrameworkSpecificFieldName("added"), hidden), out FieldInfo FieldInfoIsAdded);
         bool? IsAddedValue = (bool?)FieldInfoIsAdded.GetValue(ni);
 
         if (IsAddedValue.HasValue && IsAddedValue.Value == true)
@@ -299,6 +299,15 @@ public class TaskbarIcon : IDisposable
                 return Entry.Key;
 
         throw new InvalidCommandException(command);
+    }
+
+    private static string ToFrameworkSpecificFieldName(string name)
+    {
+#if NETFRAMEWORK
+        return name;
+#else
+        return $"_{name}";
+#endif
     }
     #endregion
 
@@ -318,7 +327,7 @@ public class TaskbarIcon : IDisposable
         if (e is System.Windows.Forms.MouseEventArgs AsMouseEventArgs)
         {
             foreach (TaskbarIcon Item in ActiveIconList)
-                if (Item.NotifyIcon == sender)
+                if (Item.NotifyIconField == sender)
                 {
                     Item.OnClick(AsMouseEventArgs.Button);
                     break;
@@ -356,7 +365,7 @@ public class TaskbarIcon : IDisposable
     {
         ContextMenuStrip? Result = null;
 
-        if (menu != null)
+        if (menu is not null)
         {
             Result = new ContextMenuStrip();
             ConvertToolStripMenuItems(menu.Items, Result.Items);
@@ -367,7 +376,7 @@ public class TaskbarIcon : IDisposable
 
     private void ConvertToolStripMenuItems(System.Windows.Controls.ItemCollection sourceItems, ToolStripItemCollection destinationItems)
     {
-        foreach (System.Windows.Controls.Control Item in sourceItems)
+        foreach (System.Windows.Controls.Control? Item in sourceItems)
             if (Item is System.Windows.Controls.MenuItem AsMenuItem)
                 if (AsMenuItem.Items.Count > 0)
                     AddSubmenuItem(destinationItems, AsMenuItem);
@@ -420,11 +429,10 @@ public class TaskbarIcon : IDisposable
 
     private static void OnMenuClicked(ToolStripMenuItem menuItem)
     {
-        if (MenuTable.ContainsKey(menuItem) && CommandTable.ContainsKey(menuItem))
+        if (MenuTable.TryGetValue(menuItem, out TaskbarIcon? TaskbarIcon) && CommandTable.TryGetValue(menuItem, out ICommand? Command))
         {
-            TaskbarIcon TaskbarIcon = MenuTable[menuItem];
-            if (CommandTable[menuItem] is RoutedCommand Command && TaskbarIcon.Target != null)
-                Command.Execute(TaskbarIcon, TaskbarIcon.Target);
+            if (Command is RoutedCommand AppCommand && TaskbarIcon.Target is not null)
+                AppCommand.Execute(TaskbarIcon, TaskbarIcon.Target);
         }
     }
 
@@ -475,13 +483,13 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     private void DisposeNow()
     {
-        using NotifyIcon ToRemove = NotifyIcon;
+        using NotifyIcon ToRemove = NotifyIconField;
 
         ToRemove.Visible = false;
         ToRemove.Click -= OnClick;
 
         foreach (TaskbarIcon Item in ActiveIconList)
-            if (Item.NotifyIcon == NotifyIcon)
+            if (Item.NotifyIconField == NotifyIconField)
             {
                 ActiveIconList.Remove(Item);
                 break;

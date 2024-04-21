@@ -1,4 +1,4 @@
-﻿namespace TestTaskbarTools;
+﻿namespace TaskbarToolsDemo;
 
 using System;
 using System.Drawing;
@@ -38,7 +38,7 @@ public partial class MainWindow : Window, IDisposable
         CloseBitmap = LoadResourceBitmap("UAC-16.png");
         CommandClose = (ICommand)FindResource("CommandClose");
 
-        TestTimer.Change(TimeSpan.FromSeconds(0), Timeout.InfiniteTimeSpan);
+        TestTimer?.Change(TimeSpan.FromSeconds(0), Timeout.InfiniteTimeSpan);
     }
     #endregion
 
@@ -53,58 +53,55 @@ public partial class MainWindow : Window, IDisposable
         AppTaskbarIcon = TaskbarIcon.Create(MainIcon, null, null, null);
 
         TestTimerDelegate = OnTestTimerStep2;
-        TestTimer.Change(TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
+        TestTimer?.Change(TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
     }
 
     private void OnTestTimerStep2()
     {
-        using (AppTaskbarIcon)
-        {
-        }
+        AppTaskbarIcon?.Dispose();
+        AppTaskbarIcon = null;
 
         TestTimerDelegate = OnTestTimerStep3;
-        TestTimer.Change(TimeSpan.FromSeconds(5), Timeout.InfiniteTimeSpan);
+        TestTimer?.Change(TimeSpan.FromSeconds(5), Timeout.InfiniteTimeSpan);
     }
 
     private void OnTestTimerStep3()
     {
         AppTaskbarIcon = TaskbarIcon.Create(MainIcon, "test", Menu, this);
 
-        TestTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-        using (TestTimer)
-        {
-        }
+        TestTimer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+        TestTimer?.Dispose();
+        TestTimer = null;
     }
     #endregion
 
     #region Events
     private void OnClose(object sender, ExecutedRoutedEventArgs e)
     {
-        using (AppTaskbarIcon)
-        {
-        }
+        AppTaskbarIcon?.Dispose();
+        AppTaskbarIcon = null;
 
         Close();
     }
 
     private void OnClearToolTip(object sender, ExecutedRoutedEventArgs e)
     {
-        AppTaskbarIcon.UpdateToolTipText(null);
+        AppTaskbarIcon?.UpdateToolTipText(null);
     }
 
     private void OnSetToolTip(object sender, ExecutedRoutedEventArgs e)
     {
-        AppTaskbarIcon.UpdateToolTipText("New tooltip");
+        AppTaskbarIcon?.UpdateToolTipText("New tooltip");
     }
 
     private void OnSetIcon(object sender, ExecutedRoutedEventArgs e)
     {
-        AppTaskbarIcon.UpdateIcon(MoonIcon);
+        AppTaskbarIcon?.UpdateIcon(MoonIcon);
     }
 
     private void OnClearCloseIcon(object sender, ExecutedRoutedEventArgs e)
     {
-        Bitmap? NullBitmap = null;
+        const Bitmap? NullBitmap = null;
         TaskbarIcon.SetMenuIcon(CommandClose, NullBitmap);
     }
 
@@ -148,7 +145,7 @@ public partial class MainWindow : Window, IDisposable
     private static Icon LoadResourceIcon(string resourceName)
     {
         Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-        using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TestTaskbarTools.{resourceName}")!)
+        using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!)
         {
             Icon ResourceIcon = new Icon(ResourceStream);
             return ResourceIcon;
@@ -158,7 +155,7 @@ public partial class MainWindow : Window, IDisposable
     private static Bitmap LoadResourceBitmap(string resourceName)
     {
         Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-        using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TestTaskbarTools.{resourceName}")!)
+        using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!)
         {
             Bitmap ResourceBitmap = new Bitmap(ResourceStream);
             return ResourceBitmap;
@@ -170,8 +167,8 @@ public partial class MainWindow : Window, IDisposable
     private Bitmap CloseBitmap = null!;
     private ContextMenu Menu = null!;
     private ICommand CommandClose = null!;
-    private TaskbarIcon AppTaskbarIcon = TaskbarIcon.Empty;
-    private Timer TestTimer;
+    private TaskbarIcon? AppTaskbarIcon = TaskbarIcon.Empty;
+    private Timer? TestTimer;
     private Action TestTimerDelegate;
     #endregion
 
@@ -219,25 +216,11 @@ public partial class MainWindow : Window, IDisposable
     /// </summary>
     private void DisposeNow()
     {
-        using (AppTaskbarIcon)
-        {
-        }
-
-        using (CloseBitmap)
-        {
-        }
-
-        using (MainIcon)
-        {
-        }
-
-        using (MoonIcon)
-        {
-        }
-
-        using (TestTimer)
-        {
-        }
+        AppTaskbarIcon?.Dispose();
+        CloseBitmap.Dispose();
+        MainIcon.Dispose();
+        MoonIcon.Dispose();
+        TestTimer?.Dispose();
     }
     #endregion
 }

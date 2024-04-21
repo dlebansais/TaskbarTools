@@ -18,7 +18,7 @@ init:
 
 environment:
   package_token:
-    secure: MvF+AGj2M3nN6iIqDZHxHsDOr6QcqKPhf6xaLwzWpukS+UFiaRDnjum5Rui0AiyF
+    secure: oeB0vPa3ehegduJ/WnxLssnK6wiIc8MVx0lVYeiXKT6pIz9ZDQ4ioQ55g6GYz9dW
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
@@ -58,17 +58,15 @@ test: off
 artifacts:
   - path: $(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Debug
-    type: NuGetPackage
   - path: $(APPVEYOR_PROJECT_NAME).*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Release
-    type: NuGetPackage
 
 deploy:
   - provider: GitHub
     release: $(VERSION_TAG)
     description: 'Automatic deployment'
     auth_token:
-      secure: cDRPl/yROuN4QIJVzPcoIuWbKvPNjgGJJX/8Z+5s4ZKix123RUJieQvJVm6JYBGM
+      secure: 8IyH+0A5FwE96xWDzhXQH5zxg49+0MhTd25bUTMcc6qePhZcVmaVd6i0bsM2tT1Q
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
     draft: false
     prerelease: false
@@ -79,7 +77,7 @@ deploy:
     release: $(VERSION_TAG)
     description: 'Automatic deployment'
     auth_token:
-      secure: cDRPl/yROuN4QIJVzPcoIuWbKvPNjgGJJX/8Z+5s4ZKix123RUJieQvJVm6JYBGM
+      secure: 8IyH+0A5FwE96xWDzhXQH5zxg49+0MhTd25bUTMcc6qePhZcVmaVd6i0bsM2tT1Q
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
     draft: false
     prerelease: false
@@ -100,7 +98,7 @@ deploy:
     skip_symbols: true
     username: dlebansais
     api_key:
-      secure: GJOgNQLOuHBXfW2wXBaMXudFnnJDNI3od5hh9LFi1brPRK81RiLcbEW9hFbT8rIN
+      secure: P1otXPxREK8T2L9vw4vpvvpXYlMyCTGa/iQIfuXtr4mjOFZBYR83Aie3hTZotfOu
     on:
       branch: deployment
       configuration: Release
@@ -110,7 +108,7 @@ deploy:
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
     username: dlebansais
     api_key:
-      secure: GJOgNQLOuHBXfW2wXBaMXudFnnJDNI3od5hh9LFi1brPRK81RiLcbEW9hFbT8rIN
+      secure: P1otXPxREK8T2L9vw4vpvvpXYlMyCTGa/iQIfuXtr4mjOFZBYR83Aie3hTZotfOu
     on:
       branch: deployment
       configuration: Debug

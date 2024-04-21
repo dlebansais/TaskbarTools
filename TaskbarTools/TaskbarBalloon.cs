@@ -43,9 +43,20 @@ public static class TaskbarBalloon
     public static void Show(string text, TimeSpan delay, TimeSpan delayWait)
     {
         using NotifyIcon Notification = new NotifyIcon() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text)!, BalloonTipText = ShortString(text)! };
-        BallonPrivateData Data = new BallonPrivateData(Notification);
-        InitializeNotification(delay, Notification, Data);
-        DisplayedBalloonList.Add(Data);
+
+        BallonPrivateData? Data = null;
+        try
+        {
+            Data = new(Notification);
+            InitializeNotification(delay, Notification, Data);
+            DisplayedBalloonList.Add(Data);
+
+            Data = null;
+        }
+        finally
+        {
+            Data?.Dispose();
+        }
 
         Thread.Sleep(delayWait);
     }
@@ -60,8 +71,8 @@ public static class TaskbarBalloon
     /// <exception cref="NullReferenceException"><paramref name="text"/> is null.</exception>
     public static void Show(string text, TimeSpan delay, Action<object> clickHandler, object clickData)
     {
-        NotifyIcon Notification = new NotifyIcon() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text)!, BalloonTipText = ShortString(text)! };
-        BallonPrivateData Data = new BallonPrivateData(Notification, clickHandler, clickData);
+        NotifyIcon Notification = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text)!, BalloonTipText = ShortString(text)! };
+        BallonPrivateData Data = new(Notification, clickHandler, clickData);
         InitializeNotification(delay, Notification, Data);
         DisplayedBalloonList.Add(Data);
     }
@@ -71,7 +82,11 @@ public static class TaskbarBalloon
     private static string? ShortString(string? text)
     {
         if (text is not null && text.Length >= 16)
+#if NETFRAMEWORK
             return text.Substring(0, 8) + "..." + text.Substring(text.Length - 8, 8);
+#else
+            return string.Concat(text.AsSpan(8), "---", text.AsSpan(text.Length - 8, 8));
+#endif
         else
             return text;
     }
@@ -143,7 +158,7 @@ public static class TaskbarBalloon
         }
     }
 
-    private class BallonPrivateData : IDisposable
+    private sealed class BallonPrivateData : IDisposable
     {
         public BallonPrivateData(NotifyIcon notification)
         {
@@ -162,6 +177,7 @@ public static class TaskbarBalloon
         public Action<object>? ClickHandler { get; private set; }
         public object ClickData { get; init; }
         public bool IsClosed { get; private set; }
+        private bool disposedValue;
 
         public void Closed()
         {
@@ -172,7 +188,7 @@ public static class TaskbarBalloon
         {
             clickData = ClickData;
 
-            if (ClickHandler != null)
+            if (ClickHandler is not null)
             {
                 clickHandler = ClickHandler;
                 ClickHandler = null;
@@ -185,26 +201,29 @@ public static class TaskbarBalloon
             }
         }
 
-        protected virtual void Dispose(bool isDisposing)
+        private void Dispose(bool disposing)
         {
-            if (isDisposing)
-                DisposeNow();
-        }
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Notification?.Dispose();
+                }
 
-        private void DisposeNow()
-        {
-            Notification = null;
+                disposedValue = true;
+            }
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
         ~BallonPrivateData()
         {
-            Dispose(false);
+            Dispose(disposing: false);
         }
     }
     #endregion

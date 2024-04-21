@@ -61,7 +61,7 @@ public static class TaskbarLocation
         int SmallestPositiveArea = 0;
 
         foreach (KeyValuePair<Screen, int> Entry in AreaTable)
-            if (SelectedScreen == null || (Entry.Value > 0 && (SmallestPositiveArea == 0 || SmallestPositiveArea > Entry.Value)))
+            if (SelectedScreen is null || (Entry.Value > 0 && (SmallestPositiveArea == 0 || SmallestPositiveArea > Entry.Value)))
             {
                 SelectedScreen = Entry.Key;
                 SmallestPositiveArea = Entry.Value;
@@ -80,7 +80,7 @@ public static class TaskbarLocation
     /// </summary>
     public static System.Drawing.Rectangle ScreenBounds
     {
-        get { return CurrentScreen == null ? System.Drawing.Rectangle.Empty : CurrentScreen.Bounds; }
+        get { return CurrentScreen is null ? System.Drawing.Rectangle.Empty : CurrentScreen.Bounds; }
     }
 
     /// <summary>
@@ -120,7 +120,7 @@ public static class TaskbarLocation
     // to be on the edge of the task bar. In screen coordinates.
     private static Point GetRelativePosition(Point position, Size size)
     {
-        if (CurrentScreen == null || !GetSystemTrayRect(out NativeMethods.RECT TrayRect, out _, out _))
+        if (CurrentScreen is null || !GetSystemTrayRect(out NativeMethods.RECT TrayRect, out _, out _))
             return new Point(0, 0);
 
         // Use the full taskbar rectangle.

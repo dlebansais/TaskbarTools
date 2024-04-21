@@ -1,4 +1,4 @@
-﻿namespace TestTaskbarTools;
+﻿namespace TaskbarToolsDemo;
 
 using System.Windows;
 
