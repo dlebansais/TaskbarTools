@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
-using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -45,9 +44,9 @@ public partial class TaskbarIcon : IDisposable
 
     private readonly NotifyIcon NotifyIconField;
     private readonly IInputElement? Target;
-    #endregion
+#endregion
 
-    #region Client Interface
+#region Client Interface
     /// <summary>
     /// Creates and displays a taskbar icon.
     /// </summary>

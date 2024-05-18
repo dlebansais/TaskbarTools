@@ -9,9 +9,9 @@
         <Platforms>x64</Platforms>
 
         <RootNamespace>TaskbarTools</RootNamespace>
-        <Version>1.4.6</Version>
-        <AssemblyVersion>1.4.6.26</AssemblyVersion>
-        <FileVersion>1.4.6.26</FileVersion>
+        <Version>1.4.5</Version>
+        <AssemblyVersion>1.4.5.29</AssemblyVersion>
+        <FileVersion>1.4.5.29</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
@@ -57,15 +57,17 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <!--
         <PackageReference Include="ConsistencyAnalyzer" Version="1.3.22">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="1.4.3" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        -->
+        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="1.4.4" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers" Version="1.4.3" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
+        <PackageReference Include="Method.Contracts.Analyzers" Version="1.4.4" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
