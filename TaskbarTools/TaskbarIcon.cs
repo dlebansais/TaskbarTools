@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
+using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -12,7 +13,7 @@ using Contracts;
 /// <summary>
 /// Represents a custom icon added to the taskbar.
 /// </summary>
-public class TaskbarIcon : IDisposable
+public partial class TaskbarIcon : IDisposable
 {
     #region Init
     /// <summary>
@@ -55,13 +56,13 @@ public class TaskbarIcon : IDisposable
     /// <param name="menu">The menu that pops up when the user left click the icon, can be null.</param>
     /// <param name="target">The object that receives command notifications, can be null.</param>
     /// <returns>The created taskbar icon object.</returns>
-    public static TaskbarIcon Create(Icon icon, string? toolTipText, System.Windows.Controls.ContextMenu? menu, IInputElement? target)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(icon))]
+    private static TaskbarIcon CreateVerified(Icon icon, string? toolTipText, System.Windows.Controls.ContextMenu? menu, IInputElement? target)
     {
-        Contract.RequireNotNull(icon, out Icon Icon);
-
         try
         {
-            NotifyIcon NotifyIcon = new NotifyIcon { Icon = Icon, Text = string.Empty };
+            NotifyIcon NotifyIcon = new NotifyIcon { Icon = icon, Text = string.Empty };
             NotifyIcon.Click += OnClick;
 
             TaskbarIcon NewTaskbarIcon = new TaskbarIcon(NotifyIcon, target);
@@ -84,11 +85,11 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <param name="isChecked">The new value of the check mark.</param>
-    public static void ToggleMenuCheck(ICommand command, out bool isChecked)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    private static void ToggleMenuCheckVerified(ICommand command, out bool isChecked)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
         isChecked = !MenuItem.Checked;
         MenuItem.Checked = isChecked;
     }
@@ -98,11 +99,11 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <returns>True if the menu item has a check mark, false otherwise.</returns>
-    public static bool IsMenuChecked(ICommand command)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    private static bool IsMenuCheckedVerified(ICommand command)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
         return MenuItem.Checked;
     }
 
@@ -111,11 +112,11 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <param name="isChecked">True if the menu item must have a check mark, false otherwise.</param>
-    public static void SetMenuCheck(ICommand command, bool isChecked)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    private static void SetMenuCheckVerified(ICommand command, bool isChecked)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
         MenuItem.Checked = isChecked;
     }
 
@@ -124,13 +125,13 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <param name="text">The new menu item text.</param>
-    public static void SetMenuText(ICommand command, string text)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    [RequireNotNull(nameof(text))]
+    private static void SetMenuTextVerified(ICommand command, string text)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-        Contract.RequireNotNull(text, out string Text);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
-        MenuItem.Text = Text;
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
+        MenuItem.Text = text;
     }
 
     /// <summary>
@@ -138,11 +139,11 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <param name="isVisible">True to show the menu item.</param>
-    public static void SetMenuIsVisible(ICommand command, bool isVisible)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    private static void SetMenuIsVisibleVerified(ICommand command, bool isVisible)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
         MenuItem.Visible = isVisible;
     }
 
@@ -151,11 +152,11 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <param name="isEnabled">True if enabled.</param>
-    public static void SetMenuIsEnabled(ICommand command, bool isEnabled)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    private static void SetMenuIsEnabledVerified(ICommand command, bool isEnabled)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
         MenuItem.Enabled = isEnabled;
     }
 
@@ -164,11 +165,11 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <param name="icon">The icon to set, null for no icon.</param>
-    public static void SetMenuIcon(ICommand command, Icon? icon)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    private static void SetMenuIconVerified(ICommand command, Icon? icon)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
 
         if (icon is not null)
             MenuItem.Image = icon.ToBitmap();
@@ -181,11 +182,11 @@ public class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="command">The command associated to the menu item.</param>
     /// <param name="bitmap">The icon to set, as a bitmap, null for no icon.</param>
-    public static void SetMenuIcon(ICommand command, Bitmap? bitmap)
+    [Access("public", "static")]
+    [RequireNotNull(nameof(command))]
+    private static void SetMenuIconVerified(ICommand command, Bitmap? bitmap)
     {
-        Contract.RequireNotNull(command, out ICommand Command);
-
-        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(Command);
+        ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
         MenuItem.Image = bitmap;
     }
 
@@ -193,13 +194,12 @@ public class TaskbarIcon : IDisposable
     /// Changes the taskbar icon.
     /// </summary>
     /// <param name="icon">The new icon displayed. The caller is responsible for releasing it as well as the old icon.</param>
-    public void UpdateIcon(Icon icon)
+    [RequireNotNull(nameof(icon))]
+    private void UpdateIconVerified(Icon icon)
     {
-        Icon Icon = Contract.RequireNotNull(icon);
-
         AssertNotEmpty();
 
-        SetNotifyIcon(NotifyIconField, Icon);
+        SetNotifyIcon(NotifyIconField, icon);
     }
 
     /// <summary>
@@ -247,11 +247,10 @@ public class TaskbarIcon : IDisposable
     /// <param name="item">The modified menu item.</param>
     /// <param name="isVisible">True if the menu should be visible.</param>
     /// <param name="isEnabled">True if the menu should be enabled.</param>
-    public static void PrepareMenuItem(System.Windows.Controls.MenuItem item, bool isVisible, bool isEnabled)
+    [RequireNotNull(nameof(item))]
+    private static void PrepareMenuItemVerified(System.Windows.Controls.MenuItem item, bool isVisible, bool isEnabled)
     {
-        Contract.RequireNotNull(item, out System.Windows.Controls.MenuItem Item);
-
-        Item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
+        item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
     }
 
     private void AssertNotEmpty()
@@ -277,15 +276,15 @@ public class TaskbarIcon : IDisposable
         Type t = typeof(NotifyIcon);
         const BindingFlags hidden = BindingFlags.NonPublic | BindingFlags.Instance;
 
-        Contract.RequireNotNull(t.GetField(valueName, hidden), out FieldInfo FieldInfoName);
+        FieldInfo FieldInfoName = Contract.AssertNotNull(t.GetField(valueName, hidden));
         FieldInfoName.SetValue(ni, value);
 
-        Contract.RequireNotNull(t.GetField(ToFrameworkSpecificFieldName("added"), hidden), out FieldInfo FieldInfoIsAdded);
+        FieldInfo FieldInfoIsAdded = Contract.AssertNotNull(t.GetField(ToFrameworkSpecificFieldName("added"), hidden));
         bool? IsAddedValue = (bool?)FieldInfoIsAdded.GetValue(ni);
 
         if (IsAddedValue.HasValue && IsAddedValue.Value == true)
         {
-            Contract.RequireNotNull(t.GetMethod("UpdateIcon", hidden), out MethodInfo MethodInfoUpdateIcon);
+            MethodInfo MethodInfoUpdateIcon = Contract.AssertNotNull(t.GetMethod("UpdateIcon", hidden));
             MethodInfoUpdateIcon.Invoke(ni, new object[] { true });
         }
     }

@@ -10,7 +10,7 @@ using Microsoft.Win32;
 /// <summary>
 /// Class that provide some information about the Windows taskbar.
 /// </summary>
-public static class TaskbarLocation
+public static partial class TaskbarLocation
 {
     #region Init
     static TaskbarLocation()
@@ -88,11 +88,10 @@ public static class TaskbarLocation
     /// </summary>
     /// <param name="element">The element for which the position should be calculated.</param>
     /// <returns>The position <paramref name="element"/> should be at to be on the side where the taskbar is.</returns>
-    public static Point GetRelativePosition(FrameworkElement element)
+    [RequireNotNull(nameof(element))]
+    private static Point GetRelativePositionVerified(FrameworkElement element)
     {
-        Contract.RequireNotNull(element, out FrameworkElement Element);
-
-        if (double.IsNaN(Element.ActualWidth) || double.IsNaN(Element.ActualHeight) || ScreenBounds.IsEmpty)
+        if (double.IsNaN(element.ActualWidth) || double.IsNaN(element.ActualHeight) || ScreenBounds.IsEmpty)
             return new Point(double.NaN, double.NaN);
 
         System.Drawing.Point FormsMousePosition = Control.MousePosition;
@@ -108,7 +107,7 @@ public static class TaskbarLocation
         double RatioX = WorkScreenWidth / CurrentScreenWidth;
         double RatioY = WorkScreenHeight / CurrentScreenHeight;
 
-        Size PopupSize = new Size((int)(Element.ActualWidth / RatioX), (int)(Element.ActualHeight / RatioY));
+        Size PopupSize = new Size((int)(element.ActualWidth / RatioX), (int)(element.ActualHeight / RatioY));
         Point RelativePosition = GetRelativePosition(MousePosition, PopupSize);
 
         RelativePosition = new Point(RelativePosition.X * RatioX, RelativePosition.Y * RatioY);
