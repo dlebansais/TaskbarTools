@@ -42,7 +42,7 @@ public static class TaskbarBalloon
     /// <param name="delayWait">The delay waiting synchronously to ensure the balloon is entirely visible upon return.</param>
     public static void Show(string text, TimeSpan delay, TimeSpan delayWait)
     {
-        using NotifyIcon Notification = new NotifyIcon() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text)!, BalloonTipText = ShortString(text)! };
+        using NotifyIcon Notification = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text)!, BalloonTipText = ShortString(text)! };
 
         BallonPrivateData? Data = null;
         try
@@ -83,7 +83,7 @@ public static class TaskbarBalloon
     {
         if (text is not null && text.Length >= 16)
 #if NETFRAMEWORK
-            return text.Substring(0, 8) + "..." + text.Substring(text.Length - 8, 8);
+            return text[..8] + "..." + text.Substring(text.Length - 8, 8);
 #else
             return string.Concat(text.AsSpan(8), "---", text.AsSpan(text.Length - 8, 8));
 #endif
@@ -109,7 +109,7 @@ public static class TaskbarBalloon
         }
     }
 
-    private static List<BallonPrivateData> DisplayedBalloonList = new List<BallonPrivateData>();
+    private static readonly List<BallonPrivateData> DisplayedBalloonList = [];
 
     private static void OnClosed(object? sender, EventArgs e)
     {
@@ -131,8 +131,10 @@ public static class TaskbarBalloon
     private static void BallonClickHandler(object? sender)
     {
         if (sender is NotifyIcon Notification && Notification.Tag is BallonPrivateData Data)
+        {
             if (Data.GetClickHandler(out Action<object> ClickHandler, out object ClickData))
                 ClickHandler.Invoke(ClickData);
+        }
     }
 
     private static void BallonCloseHandler(object? sender)
@@ -144,7 +146,7 @@ public static class TaskbarBalloon
             if (Notification.Tag is BallonPrivateData Data)
             {
                 Notification.Tag = null;
-                DisplayedBalloonList.Remove(Data);
+                _ = DisplayedBalloonList.Remove(Data);
                 Data.Closed();
 
                 using (Data)

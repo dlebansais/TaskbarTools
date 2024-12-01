@@ -40,13 +40,13 @@ public partial class TaskbarIcon : IDisposable
     /// <summary>
     /// Gets the list of icons added to the taskbar with this API.
     /// </summary>
-    protected static IList<TaskbarIcon> ActiveIconList { get; } = new List<TaskbarIcon>();
+    protected static IList<TaskbarIcon> ActiveIconList { get; } = [];
 
     private readonly NotifyIcon NotifyIconField;
     private readonly IInputElement? Target;
-#endregion
+    #endregion
 
-#region Client Interface
+    #region Client Interface
     /// <summary>
     /// Creates and displays a taskbar icon.
     /// </summary>
@@ -61,10 +61,10 @@ public partial class TaskbarIcon : IDisposable
     {
         try
         {
-            NotifyIcon NotifyIcon = new NotifyIcon { Icon = icon, Text = string.Empty };
+            NotifyIcon NotifyIcon = new() { Icon = icon, Text = string.Empty };
             NotifyIcon.Click += OnClick;
 
-            TaskbarIcon NewTaskbarIcon = new TaskbarIcon(NotifyIcon, target);
+            TaskbarIcon NewTaskbarIcon = new(NotifyIcon, target);
             NotifyIcon.ContextMenuStrip = NewTaskbarIcon.MenuToMenuStrip(menu);
 
             ActiveIconList.Add(NewTaskbarIcon);
@@ -170,10 +170,7 @@ public partial class TaskbarIcon : IDisposable
     {
         ToolStripMenuItem MenuItem = GetMenuItemFromCommand(command);
 
-        if (icon is not null)
-            MenuItem.Image = icon.ToBitmap();
-        else
-            MenuItem.Image = null;
+        MenuItem.Image = icon is not null ? icon.ToBitmap() : (Image?)null;
     }
 
     /// <summary>
@@ -281,18 +278,20 @@ public partial class TaskbarIcon : IDisposable
         FieldInfo FieldInfoIsAdded = Contract.AssertNotNull(t.GetField(ToFrameworkSpecificFieldName("added"), hidden));
         bool? IsAddedValue = (bool?)FieldInfoIsAdded.GetValue(ni);
 
-        if (IsAddedValue.HasValue && IsAddedValue.Value == true)
+        if (IsAddedValue.HasValue && IsAddedValue.Value)
         {
             MethodInfo MethodInfoUpdateIcon = Contract.AssertNotNull(t.GetMethod("UpdateIcon", hidden));
-            MethodInfoUpdateIcon.Invoke(ni, new object[] { true });
+            _ = MethodInfoUpdateIcon.Invoke(ni, [true]);
         }
     }
 
     private static ToolStripMenuItem GetMenuItemFromCommand(ICommand command)
     {
         foreach (KeyValuePair<ToolStripMenuItem, ICommand> Entry in CommandTable)
+        {
             if (Entry.Value == command)
                 return Entry.Key;
+        }
 
         throw new InvalidCommandException(command);
     }
@@ -323,11 +322,13 @@ public partial class TaskbarIcon : IDisposable
         if (e is System.Windows.Forms.MouseEventArgs AsMouseEventArgs)
         {
             foreach (TaskbarIcon Item in ActiveIconList)
+            {
                 if (Item.NotifyIconField == sender)
                 {
                     Item.OnClick(AsMouseEventArgs.Button);
                     break;
                 }
+            }
         }
     }
 
@@ -345,6 +346,13 @@ public partial class TaskbarIcon : IDisposable
 
             case MouseButtons.Right:
                 MenuOpening?.Invoke(this, EventArgs.Empty);
+                break;
+
+            case MouseButtons.None:
+            case MouseButtons.Middle:
+            case MouseButtons.XButton1:
+            case MouseButtons.XButton2:
+            default:
                 break;
         }
     }
@@ -373,38 +381,38 @@ public partial class TaskbarIcon : IDisposable
     private void ConvertToolStripMenuItems(System.Windows.Controls.ItemCollection sourceItems, ToolStripItemCollection destinationItems)
     {
         foreach (System.Windows.Controls.Control? Item in sourceItems)
+        {
             if (Item is System.Windows.Controls.MenuItem AsMenuItem)
+            {
                 if (AsMenuItem.Items.Count > 0)
                     AddSubmenuItem(destinationItems, AsMenuItem);
                 else
                     AddMenuItem(destinationItems, AsMenuItem);
+            }
             else if (Item is System.Windows.Controls.Separator)
+            {
                 AddSeparator(destinationItems);
+            }
+        }
     }
 
     private void AddSubmenuItem(ToolStripItemCollection destinationItems, System.Windows.Controls.MenuItem menuItem)
     {
         string MenuHeader = (string)menuItem.Header;
-        ToolStripMenuItem NewMenuItem = new ToolStripMenuItem(MenuHeader);
+        ToolStripMenuItem NewMenuItem = new(MenuHeader);
 
         ConvertToolStripMenuItems(menuItem.Items, NewMenuItem.DropDownItems);
 
-        destinationItems.Add(NewMenuItem);
+        _ = destinationItems.Add(NewMenuItem);
     }
 
     private void AddMenuItem(ToolStripItemCollection destinationItems, System.Windows.Controls.MenuItem menuItem)
     {
         string MenuHeader = (string)menuItem.Header;
 
-        ToolStripMenuItem NewMenuItem;
-
-        if (menuItem.Icon is Bitmap MenuBitmap)
-            NewMenuItem = new ToolStripMenuItem(MenuHeader, MenuBitmap);
-        else if (menuItem.Icon is Icon MenuIcon)
-            NewMenuItem = new ToolStripMenuItem(MenuHeader, MenuIcon.ToBitmap());
-        else
-            NewMenuItem = new ToolStripMenuItem(MenuHeader);
-
+        ToolStripMenuItem NewMenuItem = menuItem.Icon is Bitmap MenuBitmap
+            ? new ToolStripMenuItem(MenuHeader, MenuBitmap)
+            : menuItem.Icon is Icon MenuIcon ? new ToolStripMenuItem(MenuHeader, MenuIcon.ToBitmap()) : new ToolStripMenuItem(MenuHeader);
         NewMenuItem.Click += OnMenuClicked;
 
         // See PrepareMenuItem for using the visibility to carry Visible/Enabled flags
@@ -412,15 +420,15 @@ public partial class TaskbarIcon : IDisposable
         NewMenuItem.Enabled = menuItem.Visibility == Visibility.Visible;
         NewMenuItem.Checked = menuItem.IsChecked;
 
-        destinationItems.Add(NewMenuItem);
+        _ = destinationItems.Add(NewMenuItem);
         MenuTable.Add(NewMenuItem, this);
         CommandTable.Add(NewMenuItem, menuItem.Command);
     }
 
     private static void AddSeparator(ToolStripItemCollection destinationItems)
     {
-        ToolStripSeparator NewSeparator = new ToolStripSeparator();
-        destinationItems.Add(NewSeparator);
+        ToolStripSeparator NewSeparator = new();
+        _ = destinationItems.Add(NewSeparator);
     }
 
     private static void OnMenuClicked(ToolStripMenuItem menuItem)
@@ -432,8 +440,8 @@ public partial class TaskbarIcon : IDisposable
         }
     }
 
-    private static readonly Dictionary<ToolStripMenuItem, TaskbarIcon> MenuTable = new Dictionary<ToolStripMenuItem, TaskbarIcon>();
-    private static readonly Dictionary<ToolStripMenuItem, ICommand> CommandTable = new Dictionary<ToolStripMenuItem, ICommand>();
+    private static readonly Dictionary<ToolStripMenuItem, TaskbarIcon> MenuTable = [];
+    private static readonly Dictionary<ToolStripMenuItem, ICommand> CommandTable = [];
     #endregion
 
     #region Implementation of IDisposable
@@ -485,11 +493,13 @@ public partial class TaskbarIcon : IDisposable
         ToRemove.Click -= OnClick;
 
         foreach (TaskbarIcon Item in ActiveIconList)
+        {
             if (Item.NotifyIconField == NotifyIconField)
             {
-                ActiveIconList.Remove(Item);
+                _ = ActiveIconList.Remove(Item);
                 break;
             }
+        }
     }
     #endregion
 }

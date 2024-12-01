@@ -1,4 +1,6 @@
-﻿namespace TaskbarToolsDemo;
+﻿#pragma warning disable CA1515
+
+namespace TaskbarToolsDemo;
 
 using System;
 using System.Drawing;
@@ -38,7 +40,7 @@ public partial class MainWindow : Window, IDisposable
         CloseBitmap = LoadResourceBitmap("UAC-16.png");
         CommandClose = (ICommand)FindResource("CommandClose");
 
-        TestTimer?.Change(TimeSpan.FromSeconds(0), Timeout.InfiniteTimeSpan);
+        _ = TestTimer?.Change(TimeSpan.FromSeconds(0), Timeout.InfiniteTimeSpan);
     }
     #endregion
 
@@ -53,7 +55,7 @@ public partial class MainWindow : Window, IDisposable
         AppTaskbarIcon = TaskbarIcon.Create(MainIcon, null, null, null);
 
         TestTimerDelegate = OnTestTimerStep2;
-        TestTimer?.Change(TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
+        _ = TestTimer?.Change(TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
     }
 
     private void OnTestTimerStep2()
@@ -62,14 +64,14 @@ public partial class MainWindow : Window, IDisposable
         AppTaskbarIcon = null;
 
         TestTimerDelegate = OnTestTimerStep3;
-        TestTimer?.Change(TimeSpan.FromSeconds(5), Timeout.InfiniteTimeSpan);
+        _ = TestTimer?.Change(TimeSpan.FromSeconds(5), Timeout.InfiniteTimeSpan);
     }
 
     private void OnTestTimerStep3()
     {
         AppTaskbarIcon = TaskbarIcon.Create(MainIcon, "test", Menu, this);
 
-        TestTimer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+        _ = TestTimer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         TestTimer?.Dispose();
         TestTimer = null;
     }
@@ -145,21 +147,17 @@ public partial class MainWindow : Window, IDisposable
     private static Icon LoadResourceIcon(string resourceName)
     {
         Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-        using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!)
-        {
-            Icon ResourceIcon = new Icon(ResourceStream);
-            return ResourceIcon;
-        }
+        using Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!;
+        Icon ResourceIcon = new(ResourceStream);
+        return ResourceIcon;
     }
 
     private static Bitmap LoadResourceBitmap(string resourceName)
     {
         Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-        using (Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!)
-        {
-            Bitmap ResourceBitmap = new Bitmap(ResourceStream);
-            return ResourceBitmap;
-        }
+        using Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!;
+        Bitmap ResourceBitmap = new(ResourceStream);
+        return ResourceBitmap;
     }
 
     private Icon MainIcon = null!;

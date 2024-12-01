@@ -27,10 +27,9 @@ public static class TaskbarShortcut
     /// <returns>True if the shortcut was changed to use <paramref name="iconFile"/>.</returns>
     public static bool SetTaskbarShortcut(string shortcutFileName, string iconFile)
     {
-        if (!File.Exists(iconFile))
-            throw new ArgumentException($"{nameof(iconFile)} must be the path to an existing file");
-
-        return SetTaskbarShortcutInternal(shortcutFileName, iconFile);
+        return !File.Exists(iconFile)
+            ? throw new ArgumentException($"{nameof(iconFile)} must be the path to an existing file")
+            : SetTaskbarShortcutInternal(shortcutFileName, iconFile);
     }
 
     /// <summary>
@@ -71,7 +70,7 @@ public static class TaskbarShortcut
 
         Shell32.ShellLinkObject Link = GetShellLink(shortcutFileName);
 
-        Link.GetIconLocation(out iconFile);
+        _ = Link.GetIconLocation(out iconFile);
         return true;
     }
 
@@ -101,7 +100,7 @@ public static class TaskbarShortcut
 
     private static Shell32.ShellLinkObject GetShellLink(string shortcutFileName)
     {
-        Shell32.Shell Shell = new Shell32.Shell();
+        Shell32.Shell Shell = new();
         Shell32.Folder Folder = Shell.NameSpace(TaskbarShortcutPath);
         Shell32.FolderItem Item = Folder.ParseName(shortcutFileName);
         Shell32.ShellLinkObject Link = (Shell32.ShellLinkObject)Item.GetLink;

@@ -9,9 +9,9 @@
         <Platforms>x64</Platforms>
 
         <RootNamespace>TaskbarToolsDemo</RootNamespace>
-        <Version>1.4.5</Version>
-        <AssemblyVersion>1.4.5.29</AssemblyVersion>
-        <FileVersion>1.4.5.23</FileVersion>
+        <Version>1.4.6</Version>
+        <AssemblyVersion>1.4.6.30</AssemblyVersion>
+        <FileVersion>1.4.6.30</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
