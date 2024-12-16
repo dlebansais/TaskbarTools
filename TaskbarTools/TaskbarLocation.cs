@@ -21,10 +21,7 @@ public static partial class TaskbarLocation
         SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
     }
 
-    private static void OnDisplaySettingsChanged(object? sender, EventArgs e)
-    {
-        UpdateLocation();
-    }
+    private static void OnDisplaySettingsChanged(object? sender, EventArgs e) => UpdateLocation();
 
     private static void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
     {
@@ -195,15 +192,9 @@ public static partial class TaskbarLocation
         return new Point(RectCenterX, RectCenterY);
     }
 
-    private static int? GetWorkingAreaWidthQuarter()
-    {
-        return (CurrentScreen?.WorkingArea.Right - CurrentScreen?.WorkingArea.Left) / 4;
-    }
+    private static int? GetWorkingAreaWidthQuarter() => (CurrentScreen?.WorkingArea.Right - CurrentScreen?.WorkingArea.Left) / 4;
 
-    private static int? GetWorkingAreaHeightQuarter()
-    {
-        return (CurrentScreen?.WorkingArea.Bottom - CurrentScreen?.WorkingArea.Top) / 4;
-    }
+    private static int? GetWorkingAreaHeightQuarter() => (CurrentScreen?.WorkingArea.Bottom - CurrentScreen?.WorkingArea.Top) / 4;
 
     private static void AlignedToLeft(Point position, Size size, NativeMethods.RECT taskbarRect, out double x, out double y)
     {

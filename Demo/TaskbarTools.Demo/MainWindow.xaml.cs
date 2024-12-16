@@ -45,10 +45,7 @@ public partial class MainWindow : Window, IDisposable
     #endregion
 
     #region Timers
-    private void TestTimerCallback(object? parameter)
-    {
-        Dispatcher.Invoke(TestTimerDelegate);
-    }
+    private void TestTimerCallback(object? parameter) => Dispatcher.Invoke(TestTimerDelegate);
 
     private void OnTestTimerStep1()
     {
@@ -86,20 +83,11 @@ public partial class MainWindow : Window, IDisposable
         Close();
     }
 
-    private void OnClearToolTip(object sender, ExecutedRoutedEventArgs e)
-    {
-        AppTaskbarIcon?.UpdateToolTipText(null);
-    }
+    private void OnClearToolTip(object sender, ExecutedRoutedEventArgs e) => AppTaskbarIcon?.UpdateToolTipText(null);
 
-    private void OnSetToolTip(object sender, ExecutedRoutedEventArgs e)
-    {
-        AppTaskbarIcon?.UpdateToolTipText("New tooltip");
-    }
+    private void OnSetToolTip(object sender, ExecutedRoutedEventArgs e) => AppTaskbarIcon?.UpdateToolTipText("New tooltip");
 
-    private void OnSetIcon(object sender, ExecutedRoutedEventArgs e)
-    {
-        AppTaskbarIcon?.UpdateIcon(MoonIcon);
-    }
+    private void OnSetIcon(object sender, ExecutedRoutedEventArgs e) => AppTaskbarIcon?.UpdateIcon(MoonIcon);
 
     private void OnClearCloseIcon(object sender, ExecutedRoutedEventArgs e)
     {
@@ -107,40 +95,19 @@ public partial class MainWindow : Window, IDisposable
         TaskbarIcon.SetMenuIcon(CommandClose, NullBitmap);
     }
 
-    private void OnSetCloseIcon(object sender, ExecutedRoutedEventArgs e)
-    {
-        TaskbarIcon.SetMenuIcon(CommandClose, CloseBitmap);
-    }
+    private void OnSetCloseIcon(object sender, ExecutedRoutedEventArgs e) => TaskbarIcon.SetMenuIcon(CommandClose, CloseBitmap);
 
-    private void OnEnable(object sender, ExecutedRoutedEventArgs e)
-    {
-        TaskbarIcon.SetMenuIsEnabled(CommandClose, true);
-    }
+    private void OnEnable(object sender, ExecutedRoutedEventArgs e) => TaskbarIcon.SetMenuIsEnabled(CommandClose, true);
 
-    private void OnDisable(object sender, ExecutedRoutedEventArgs e)
-    {
-        TaskbarIcon.SetMenuIsEnabled(CommandClose, false);
-    }
+    private void OnDisable(object sender, ExecutedRoutedEventArgs e) => TaskbarIcon.SetMenuIsEnabled(CommandClose, false);
 
-    private void OnShowBalloon(object sender, ExecutedRoutedEventArgs e)
-    {
-        TaskbarBalloon.Show("Balloon Text", TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
-    }
+    private void OnShowBalloon(object sender, ExecutedRoutedEventArgs e) => TaskbarBalloon.Show("Balloon Text", TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
 
-    private void OnChangeText(object sender, ExecutedRoutedEventArgs e)
-    {
-        TaskbarIcon.SetMenuText(CommandClose, "New close text");
-    }
+    private void OnChangeText(object sender, ExecutedRoutedEventArgs e) => TaskbarIcon.SetMenuText(CommandClose, "New close text");
 
-    private void OnShow(object sender, ExecutedRoutedEventArgs e)
-    {
-        TaskbarIcon.SetMenuIsVisible(CommandClose, true);
-    }
+    private void OnShow(object sender, ExecutedRoutedEventArgs e) => TaskbarIcon.SetMenuIsVisible(CommandClose, true);
 
-    private void OnHide(object sender, ExecutedRoutedEventArgs e)
-    {
-        TaskbarIcon.SetMenuIsVisible(CommandClose, false);
-    }
+    private void OnHide(object sender, ExecutedRoutedEventArgs e) => TaskbarIcon.SetMenuIsVisible(CommandClose, false);
     #endregion
 
     #region Implementation

@@ -14,10 +14,7 @@ public static class TaskbarShortcut
     /// <param name="shortcutFileName">The shotcut file name (.lnk).</param>
     /// <param name="iconFile">The path to the icon file in the shortcut upon return.</param>
     /// <returns>True if the shortcut contains a path to an icon file.</returns>
-    public static bool GetTaskbarShortcut(string shortcutFileName, out string iconFile)
-    {
-        return GetTaskbarShortcutInternal(shortcutFileName, out iconFile);
-    }
+    public static bool GetTaskbarShortcut(string shortcutFileName, out string iconFile) => GetTaskbarShortcutInternal(shortcutFileName, out iconFile);
 
     /// <summary>
     /// Sets the content of a shortcut on the taskbar.

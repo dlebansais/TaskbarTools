@@ -244,10 +244,7 @@ public partial class TaskbarIcon : IDisposable
     /// <param name="isVisible">True if the menu should be visible.</param>
     /// <param name="isEnabled">True if the menu should be enabled.</param>
     [RequireNotNull(nameof(item))]
-    private static void PrepareMenuItemVerified(System.Windows.Controls.MenuItem item, bool isVisible, bool isEnabled)
-    {
-        item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
-    }
+    private static void PrepareMenuItemVerified(System.Windows.Controls.MenuItem item, bool isVisible, bool isEnabled) => item.Visibility = isVisible ? (isEnabled ? Visibility.Visible : Visibility.Hidden) : Visibility.Collapsed;
 
     private void AssertNotEmpty()
     {
@@ -257,15 +254,9 @@ public partial class TaskbarIcon : IDisposable
     #endregion
 
     #region Implementation
-    private static void SetNotifyIconText(NotifyIcon ni, string? text)
-    {
-        SetNotifyIconValue(ni, ToFrameworkSpecificFieldName("text"), text);
-    }
+    private static void SetNotifyIconText(NotifyIcon ni, string? text) => SetNotifyIconValue(ni, ToFrameworkSpecificFieldName("text"), text);
 
-    private static void SetNotifyIcon(NotifyIcon ni, Icon icon)
-    {
-        SetNotifyIconValue(ni, ToFrameworkSpecificFieldName("icon"), icon);
-    }
+    private static void SetNotifyIcon(NotifyIcon ni, Icon icon) => SetNotifyIconValue(ni, ToFrameworkSpecificFieldName("icon"), icon);
 
     private static void SetNotifyIconValue(NotifyIcon ni, string valueName, object? value)
     {
@@ -296,14 +287,11 @@ public partial class TaskbarIcon : IDisposable
         throw new InvalidCommandException(command);
     }
 
-    private static string ToFrameworkSpecificFieldName(string name)
-    {
 #if NETFRAMEWORK
-        return name;
+    private static string ToFrameworkSpecificFieldName(string name) => name;
 #else
-        return $"_{name}";
+    private static string ToFrameworkSpecificFieldName(string name) => $"_{name}";
 #endif
-    }
     #endregion
 
     #region Events

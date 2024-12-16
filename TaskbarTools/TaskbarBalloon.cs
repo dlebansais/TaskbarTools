@@ -29,10 +29,7 @@ public static class TaskbarBalloon
     /// </summary>
     /// <param name="text">The text to show.</param>
     /// <param name="delay">The delay, in milliseconds.</param>
-    public static void Show(string text, TimeSpan delay)
-    {
-        Show(text, delay, TimeSpan.Zero);
-    }
+    public static void Show(string text, TimeSpan delay) => Show(text, delay, TimeSpan.Zero);
 
     /// <summary>
     /// Displays a notification in a taskbar balloon.
@@ -111,10 +108,7 @@ public static class TaskbarBalloon
 
     private static readonly List<BallonPrivateData> DisplayedBalloonList = [];
 
-    private static void OnClosed(object? sender, EventArgs e)
-    {
-        BallonCloseHandler(sender);
-    }
+    private static void OnClosed(object? sender, EventArgs e) => BallonCloseHandler(sender);
 
     private static void OnClicked(object? sender, EventArgs e)
     {
@@ -181,10 +175,7 @@ public static class TaskbarBalloon
         public bool IsClosed { get; private set; }
         private bool disposedValue;
 
-        public void Closed()
-        {
-            IsClosed = true;
-        }
+        public void Closed() => IsClosed = true;
 
         public bool GetClickHandler(out Action<object> clickHandler, out object clickData)
         {
