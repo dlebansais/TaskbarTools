@@ -1,4 +1,5 @@
 ﻿[*.cs]
+dotnet_analyzer_diagnostic.category-Style.severity = error
 
 #### CA
 

@@ -10,8 +10,8 @@
 
         <RootNamespace>TaskbarToolsDemo</RootNamespace>
         <Version>1.4.7</Version>
-        <AssemblyVersion>1.4.7.31</AssemblyVersion>
-        <FileVersion>1.4.7.31</FileVersion>
+        <AssemblyVersion>2.0.0.33</AssemblyVersion>
+        <FileVersion>1.4.7.32</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />

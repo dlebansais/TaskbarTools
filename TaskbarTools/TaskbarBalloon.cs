@@ -39,7 +39,7 @@ public static class TaskbarBalloon
     /// <param name="delayWait">The delay waiting synchronously to ensure the balloon is entirely visible upon return.</param>
     public static void Show(string text, TimeSpan delay, TimeSpan delayWait)
     {
-        using NotifyIcon Notification = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text)!, BalloonTipText = ShortString(text)! };
+        using NotifyIcon Notification = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) };
 
         BallonPrivateData? Data = null;
         try
@@ -68,7 +68,7 @@ public static class TaskbarBalloon
     /// <exception cref="NullReferenceException"><paramref name="text"/> is null.</exception>
     public static void Show(string text, TimeSpan delay, Action<object> clickHandler, object clickData)
     {
-        NotifyIcon Notification = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text)!, BalloonTipText = ShortString(text)! };
+        NotifyIcon Notification = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) };
         BallonPrivateData Data = new(Notification, clickHandler, clickData);
         InitializeNotification(delay, Notification, Data);
         DisplayedBalloonList.Add(Data);
@@ -76,7 +76,7 @@ public static class TaskbarBalloon
     #endregion
 
     #region Implementation
-    private static string? ShortString(string? text)
+    private static string ShortString(string? text)
     {
         if (text is not null && text.Length >= 16)
 #if NETFRAMEWORK
@@ -85,7 +85,7 @@ public static class TaskbarBalloon
             return string.Concat(text.AsSpan(8), "---", text.AsSpan(text.Length - 8, 8));
 #endif
         else
-            return text;
+            return text is not null ? text : string.Empty;
     }
 
     private static void InitializeNotification(TimeSpan delay, NotifyIcon notification, BallonPrivateData data)
