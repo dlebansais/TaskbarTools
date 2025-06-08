@@ -3,6 +3,7 @@
 namespace TaskbarToolsDemo;
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -15,7 +16,7 @@ using TaskbarTools;
 /// <summary>
 /// Represents an object that tests Taskbar features.
 /// </summary>
-public partial class MainWindow : Window, IDisposable
+public partial class MainWindow : Window, INotifyPropertyChanged, IDisposable
 {
     #region Init
     /// <summary>
@@ -26,6 +27,7 @@ public partial class MainWindow : Window, IDisposable
         InitializeComponent();
         DataContext = this;
 
+        CurrentStateTextInternal = "Initializing...";
         TestTimer = new Timer(new TimerCallback(TestTimerCallback));
         Loaded += OnLoaded;
 
@@ -34,6 +36,8 @@ public partial class MainWindow : Window, IDisposable
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        CurrentStateText = "Loaded, please wait...";
+
         MainIcon = LoadResourceIcon("Idle-Enabled.ico");
         MoonIcon = LoadResourceIcon("moon.ico");
         Menu = (ContextMenu)FindResource("Menu");
@@ -42,6 +46,24 @@ public partial class MainWindow : Window, IDisposable
 
         _ = TestTimer?.Change(TimeSpan.FromSeconds(0), Timeout.InfiniteTimeSpan);
     }
+
+    /// <summary>
+    /// Gets the current state text of the application, which is displayed in the main window.
+    /// </summary>
+    public string CurrentStateText
+    {
+        get => CurrentStateTextInternal;
+        private set
+        {
+            if (CurrentStateTextInternal != value)
+            {
+                CurrentStateTextInternal = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentStateText)));
+            }
+        }
+    }
+
+    private string CurrentStateTextInternal;
     #endregion
 
     #region Timers
@@ -49,6 +71,8 @@ public partial class MainWindow : Window, IDisposable
 
     private void OnTestTimerStep1()
     {
+        CurrentStateText = "Step 1, please wait...";
+
         AppTaskbarIcon = TaskbarIcon.Create(MainIcon, null, null, null);
 
         TestTimerDelegate = OnTestTimerStep2;
@@ -57,6 +81,8 @@ public partial class MainWindow : Window, IDisposable
 
     private void OnTestTimerStep2()
     {
+        CurrentStateText = "Step 2, please wait...";
+
         AppTaskbarIcon?.Dispose();
         AppTaskbarIcon = null;
 
@@ -66,6 +92,8 @@ public partial class MainWindow : Window, IDisposable
 
     private void OnTestTimerStep3()
     {
+        CurrentStateText = "Last step done.";
+
         AppTaskbarIcon = TaskbarIcon.Create(MainIcon, "test", Menu, this);
 
         _ = TestTimer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
@@ -135,6 +163,12 @@ public partial class MainWindow : Window, IDisposable
     private TaskbarIcon? AppTaskbarIcon = TaskbarIcon.Empty;
     private Timer? TestTimer;
     private Action TestTimerDelegate;
+    #endregion
+
+    #region Implementation of INotifyPropertyChanged
+
+    /// <inheritdoc />
+    public event PropertyChangedEventHandler? PropertyChanged;
     #endregion
 
     #region Implementation of IDisposable

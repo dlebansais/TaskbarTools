@@ -22,7 +22,7 @@ public partial class TaskbarIcon : IDisposable
 
     private TaskbarIcon()
     {
-        NotifyIconField = new NotifyIcon();
+        EmptyIcon = new NotifyIcon();
         Target = Keyboard.FocusedElement;
     }
 
@@ -31,9 +31,11 @@ public partial class TaskbarIcon : IDisposable
     /// </summary>
     /// <param name="notifyIcon">The system icon instance.</param>
     /// <param name="target">The target input element for menu interaction. Can be null.</param>
-    protected TaskbarIcon(NotifyIcon notifyIcon, IInputElement? target)
+    /// <param name="leaveOpen">A value indicating whether to dispose or not of <paramref name="notifyIcon"/> when this instance is disposed.</param>
+    protected TaskbarIcon(NotifyIcon notifyIcon, IInputElement? target, bool leaveOpen = false)
     {
-        NotifyIconField = notifyIcon;
+        NotifyIcon = notifyIcon;
+        LeaveOpen = leaveOpen;
         Target = target;
     }
 
@@ -42,8 +44,16 @@ public partial class TaskbarIcon : IDisposable
     /// </summary>
     protected static IList<TaskbarIcon> ActiveIconList { get; } = [];
 
-    private readonly NotifyIcon NotifyIconField;
+    private readonly NotifyIcon? EmptyIcon;
+    private readonly bool LeaveOpen;
     private readonly IInputElement? Target;
+    #endregion
+
+    #region Properties
+    /// <summary>
+    /// Gets the system icon instance.
+    /// </summary>
+    public NotifyIcon? NotifyIcon { get; }
     #endregion
 
     #region Client Interface
@@ -61,10 +71,11 @@ public partial class TaskbarIcon : IDisposable
     {
         try
         {
-            NotifyIcon NotifyIcon = new() { Icon = icon, Text = string.Empty };
-            NotifyIcon.Click += OnClick;
+            TaskbarIcon NewTaskbarIcon = new(new() { Icon = icon, Text = string.Empty }, target, leaveOpen: false);
 
-            TaskbarIcon NewTaskbarIcon = new(NotifyIcon, target);
+            NotifyIcon? NotifyIcon = NewTaskbarIcon.NotifyIcon;
+            NotifyIcon = Contract.AssertNotNull(NotifyIcon, "NotifyIcon is never null at this point, we just created it.");
+            NotifyIcon.Click += OnClick;
             NotifyIcon.ContextMenuStrip = NewTaskbarIcon.MenuToMenuStrip(menu);
 
             ActiveIconList.Add(NewTaskbarIcon);
@@ -195,7 +206,9 @@ public partial class TaskbarIcon : IDisposable
     {
         AssertNotEmpty();
 
-        SetNotifyIcon(NotifyIconField, icon);
+        NotifyIcon? EffectiveIcon = NotifyIcon ?? EmptyIcon;
+        EffectiveIcon = Contract.AssertNotNull(EffectiveIcon, "Either NotifyIcon or EmptyIcon is set.");
+        SetNotifyIcon(EffectiveIcon, icon);
     }
 
     /// <summary>
@@ -212,7 +225,9 @@ public partial class TaskbarIcon : IDisposable
         {
             try
             {
-                SetNotifyIconText(NotifyIconField, toolTipText);
+                NotifyIcon? EffectiveIcon = NotifyIcon ?? EmptyIcon;
+                EffectiveIcon = Contract.AssertNotNull(EffectiveIcon, "Either NotifyIcon or EmptyIcon is set.");
+                SetNotifyIconText(EffectiveIcon, toolTipText);
                 return;
             }
 #pragma warning disable CA1031 // Do not catch general exception types
@@ -311,7 +326,7 @@ public partial class TaskbarIcon : IDisposable
         {
             foreach (TaskbarIcon Item in ActiveIconList)
             {
-                if (Item.NotifyIconField == sender)
+                if (Item.NotifyIcon == sender)
                 {
                     Item.OnClick(AsMouseEventArgs.Button);
                     break;
@@ -400,7 +415,7 @@ public partial class TaskbarIcon : IDisposable
 
         ToolStripMenuItem NewMenuItem = menuItem.Icon is Bitmap MenuBitmap
             ? new ToolStripMenuItem(MenuHeader, MenuBitmap)
-            : menuItem.Icon is Icon MenuIcon ? new ToolStripMenuItem(MenuHeader, MenuIcon.ToBitmap()) : new ToolStripMenuItem(MenuHeader);
+            : menuItem.Icon is Icon MenuIcon ? CreateToolStripMenuItem(MenuHeader, MenuIcon) : new ToolStripMenuItem(MenuHeader);
         NewMenuItem.Click += OnMenuClicked;
 
         // See PrepareMenuItem for using the visibility to carry Visible/Enabled flags
@@ -411,6 +426,12 @@ public partial class TaskbarIcon : IDisposable
         _ = destinationItems.Add(NewMenuItem);
         MenuTable.Add(NewMenuItem, this);
         CommandTable.Add(NewMenuItem, menuItem.Command);
+    }
+
+    private static ToolStripMenuItem CreateToolStripMenuItem(string menuHeader, Icon menuIcon)
+    {
+        using Bitmap MenuBitmap = menuIcon.ToBitmap();
+        return new ToolStripMenuItem(menuHeader, MenuBitmap);
     }
 
     private static void AddSeparator(ToolStripItemCollection destinationItems)
@@ -475,19 +496,23 @@ public partial class TaskbarIcon : IDisposable
     /// </summary>
     private void DisposeNow()
     {
-        using NotifyIcon ToRemove = NotifyIconField;
-
-        ToRemove.Visible = false;
-        ToRemove.Click -= OnClick;
+        NotifyIcon? EffectiveIcon = NotifyIcon ?? EmptyIcon;
+        EffectiveIcon = Contract.AssertNotNull(EffectiveIcon, "Either NotifyIcon or EmptyIcon is set.");
+        EffectiveIcon.Visible = false;
+        EffectiveIcon.Click -= OnClick;
 
         foreach (TaskbarIcon Item in ActiveIconList)
         {
-            if (Item.NotifyIconField == NotifyIconField)
+            if (Item.NotifyIcon == NotifyIcon)
             {
                 _ = ActiveIconList.Remove(Item);
                 break;
             }
         }
+
+        EmptyIcon?.Dispose();
+        if (!LeaveOpen)
+            NotifyIcon?.Dispose();
     }
     #endregion
 }

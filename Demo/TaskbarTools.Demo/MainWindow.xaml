@@ -53,5 +53,7 @@
         <CommandBinding Command="{StaticResource CommandShow}" Executed="OnShow"/>
         <CommandBinding Command="{StaticResource CommandHide}" Executed="OnHide"/>
     </Window.CommandBindings>
-    <Grid/>
+    <Grid>
+        <TextBlock Text="{Binding CurrentStateText}" Margin="10" />
+    </Grid>
 </Window>

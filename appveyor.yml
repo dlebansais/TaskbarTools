@@ -18,7 +18,7 @@ init:
 
 environment:
   NuGetPackageSourceCredentials_github:     # value: Username=dlebansais;Password={github package token}
-    secure: Fd8cbeFRzxym3D4FpbJo2m943iBsBRgrAGOEFhMHDO90WMUkfdJECxPcHpWmkxregb17bhgiIhvFJB9ac4dx3cr3ZpsxpqTzIc61BaUiv90=
+    secure: Fd8cbeFRzxym3D4FpbJo2m943iBsBRgrAGOEFhMHDO8fjmexYLxPFiT7r6EH/m/+gLVf7ft79axHnnaPYwiyO/VL8bwpli1lCEVaTGhPUjM=
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
@@ -66,7 +66,7 @@ deploy:
     release: $(VERSION_TAG)
     description: 'Automatic deployment'
     auth_token:
-      secure: 8IyH+0A5FwE96xWDzhXQH5zxg49+0MhTd25bUTMcc6qePhZcVmaVd6i0bsM2tT1Q
+      secure: hjfTFfWeXzkCbwNb/qPmZik9szwztg8bDIxWAM70ZVhQLIIMhLXj9+zQEdovEUfk
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
     draft: false
     prerelease: false
@@ -77,7 +77,7 @@ deploy:
     release: $(VERSION_TAG)
     description: 'Automatic deployment'
     auth_token:
-      secure: 8IyH+0A5FwE96xWDzhXQH5zxg49+0MhTd25bUTMcc6qePhZcVmaVd6i0bsM2tT1Q
+      secure: hjfTFfWeXzkCbwNb/qPmZik9szwztg8bDIxWAM70ZVhQLIIMhLXj9+zQEdovEUfk
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
     draft: false
     prerelease: false
@@ -88,7 +88,7 @@ deploy:
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
     skip_symbols: true
     api_key:
-      secure: uWTgpdAmDlZwb4//7sBgzFwN0HGnNCKpVUyRl2V7HPznoSDaa6yBar/KE6jLDZl9
+      secure: Wrt1RLR81rx4nHwWR3jbGRqiaevBfViPxp9R08sRQKTQ24v6ZOiHcNHcBKZ8do4+
     on:
       branch: deployment
       configuration: Release
@@ -98,7 +98,7 @@ deploy:
     skip_symbols: true
     username: dlebansais
     api_key:
-      secure: P1otXPxREK8T2L9vw4vpvvpXYlMyCTGa/iQIfuXtr4mjOFZBYR83Aie3hTZotfOu
+      secure: 5tcSRVegOcTQlDtIaRuucZxjxp4BmVhrdVoxJtejCcfsCmBV+ZwyfSXrlRsF9QxZ
     on:
       branch: deployment
       configuration: Release
@@ -108,7 +108,7 @@ deploy:
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
     username: dlebansais
     api_key:
-      secure: P1otXPxREK8T2L9vw4vpvvpXYlMyCTGa/iQIfuXtr4mjOFZBYR83Aie3hTZotfOu
+      secure: 5tcSRVegOcTQlDtIaRuucZxjxp4BmVhrdVoxJtejCcfsCmBV+ZwyfSXrlRsF9QxZ
     on:
       branch: deployment
       configuration: Debug

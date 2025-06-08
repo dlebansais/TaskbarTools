@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -68,9 +69,8 @@ public static class TaskbarBalloon
     /// <exception cref="NullReferenceException"><paramref name="text"/> is null.</exception>
     public static void Show(string text, TimeSpan delay, Action<object> clickHandler, object clickData)
     {
-        NotifyIcon Notification = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) };
-        BallonPrivateData Data = new(Notification, clickHandler, clickData);
-        InitializeNotification(delay, Notification, Data);
+        BallonPrivateData Data = new(new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) }, clickHandler, clickData, leaveOpen: false);
+        InitializeNotification(delay, Data.Notification, Data);
         DisplayedBalloonList.Add(Data);
     }
     #endregion
@@ -100,9 +100,10 @@ public static class TaskbarBalloon
             notification.ShowBalloonTip((int)delay.TotalMilliseconds);
         }
 #pragma warning disable CA1031 // Do not catch general exception types
-        catch
+        catch (Exception exception)
 #pragma warning restore CA1031 // Do not catch general exception types
         {
+            Debug.WriteLine($"Error in InitializeNotification: {exception.Message}");
         }
     }
 
@@ -142,34 +143,36 @@ public static class TaskbarBalloon
                 Notification.Tag = null;
                 _ = DisplayedBalloonList.Remove(Data);
                 Data.Closed();
-
-                using (Data)
-                {
-                }
+#pragma warning disable IDISP007 // Don't dispose injected
+                Data.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected
             }
 
-            using (Notification)
-            {
-            }
+#pragma warning disable IDISP007 // Don't dispose injected
+            Notification.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected
         }
     }
 
     private sealed class BallonPrivateData : IDisposable
     {
-        public BallonPrivateData(NotifyIcon notification)
+        public BallonPrivateData(NotifyIcon notification, bool leaveOpen = false)
         {
             Notification = notification;
             ClickData = this;
+            LeaveOpen = leaveOpen;
         }
 
-        public BallonPrivateData(NotifyIcon notification, Action<object> clickHandler, object clickData)
+        public BallonPrivateData(NotifyIcon notification, Action<object> clickHandler, object clickData, bool leaveOpen = false)
             : this(notification)
         {
             ClickHandler = clickHandler;
             ClickData = clickData;
+            LeaveOpen = leaveOpen;
         }
 
-        public NotifyIcon? Notification { get; private set; }
+        public NotifyIcon Notification { get; }
+        private readonly bool LeaveOpen;
         public Action<object>? ClickHandler { get; private set; }
         public object ClickData { get; init; }
         public bool IsClosed { get; private set; }
@@ -200,7 +203,8 @@ public static class TaskbarBalloon
             {
                 if (disposing)
                 {
-                    Notification?.Dispose();
+                    if (!LeaveOpen)
+                        Notification?.Dispose();
                 }
 
                 disposedValue = true;
