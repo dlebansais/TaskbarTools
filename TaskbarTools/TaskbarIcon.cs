@@ -71,11 +71,10 @@ public partial class TaskbarIcon : IDisposable
     {
         try
         {
-            TaskbarIcon NewTaskbarIcon = new(new() { Icon = icon, Text = string.Empty }, target, leaveOpen: false);
-
-            NotifyIcon? NotifyIcon = NewTaskbarIcon.NotifyIcon;
-            NotifyIcon = Contract.AssertNotNull(NotifyIcon, "NotifyIcon is never null at this point, we just created it.");
+            NotifyIcon NotifyIcon = new() { Icon = icon, Text = string.Empty };
             NotifyIcon.Click += OnClick;
+
+            TaskbarIcon NewTaskbarIcon = new(NotifyIcon, target, leaveOpen: false);
             NotifyIcon.ContextMenuStrip = NewTaskbarIcon.MenuToMenuStrip(menu);
 
             ActiveIconList.Add(NewTaskbarIcon);

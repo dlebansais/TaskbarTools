@@ -69,7 +69,8 @@ public static class TaskbarBalloon
     /// <exception cref="NullReferenceException"><paramref name="text"/> is null.</exception>
     public static void Show(string text, TimeSpan delay, Action<object> clickHandler, object clickData)
     {
-        BallonPrivateData Data = new(new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) }, clickHandler, clickData, leaveOpen: false);
+        NotifyIcon NotifyIcon = new() { Visible = true, Icon = SystemIcons.Shield, Text = ShortString(text), BalloonTipText = ShortString(text) };
+        BallonPrivateData Data = new(NotifyIcon, clickHandler, clickData, leaveOpen: false);
         InitializeNotification(delay, Data.Notification, Data);
         DisplayedBalloonList.Add(Data);
     }
