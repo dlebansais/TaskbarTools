@@ -193,7 +193,7 @@ public static class TaskbarBalloon
             }
             else
             {
-                clickHandler = new Action<object>((object data) => { });
+                clickHandler = new Action<object>(data => { });
                 return false;
             }
         }
