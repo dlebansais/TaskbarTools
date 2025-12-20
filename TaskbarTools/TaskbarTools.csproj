@@ -44,6 +44,15 @@
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''">
+        <DefineConstants>$(DefineConstants);FRIEND_ASSEMBLY_NOT_SIGNED</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' == ''">
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\signing.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <None Include="..\.editorconfig" Link=".editorconfig" />
     </ItemGroup>
