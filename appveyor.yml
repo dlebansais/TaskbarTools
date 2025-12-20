@@ -17,15 +17,18 @@ init:
   - git config --global core.autocrlf input
 
 environment:
-  NuGetPackageSourceCredentials_github:     # value: Username=dlebansais;Password={github package token}
-    secure: Fd8cbeFRzxym3D4FpbJo2m943iBsBRgrAGOEFhMHDO8fjmexYLxPFiT7r6EH/m/+gLVf7ft79axHnnaPYwiyO/VL8bwpli1lCEVaTGhPUjM=
+# value: <password to decrypt snk file>
+  SnkPassword:
+    secure: 1svE5KENguPZZA9WI7jqI4rFGWREjMTmt//xbbv+POFKS8BdTi/TE2zB7jU0e7BsYW8G1ZP/4NxjfvnM/EOuH/VxpbyUo8p6fayCu3fDKbLBAt7PWIRCy4mo7SWR0vHAw/Q6cFQHWfA7EVu7eVC66Q==
+  PACKAGE_PREFIX: dlebansais
 
 matrix:
-  fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
+# set this flag to immediately finish build once one of the jobs fails.
+  fast_finish: true
 
 before_build:
   - nuget restore %APPVEYOR_PROJECT_NAME%.sln
-  - nuget install GitCommitId -DependencyVersion Highest -OutputDirectory packages
+  - nuget install dlebansais.GitCommitId -DependencyVersion Highest -OutputDirectory packages
   - dotnet restore
 
 configuration:
@@ -36,17 +39,16 @@ build:
   project: $(APPVEYOR_PROJECT_NAME).sln
 
 after_build:
-  - nuget install Packager -DependencyVersion Highest -OutputDirectory packages # Install Packager
-  - ps: $folder = Get-ChildItem -Path packages/Packager.* -Name | Out-String    # Get the installation folder (we don't know the actual version)
-  - ps: $firstline = ($folder -split '\r\n')[0]                                 # Get rid of carriage-return
-  - ps: $fullpath = ".\packages\$firstline\lib\net481\Packager.exe"             # Build full path
+  - nuget install dlebansais.Packager -DependencyVersion Highest -OutputDirectory packages # Install Packager
+  - ps: $folder = Get-ChildItem -Path packages/dlebansais.Packager.* -Name | Out-String    # Get the installation folder (we don't know the actual version)
+  - ps: $firstline = ($folder -split '\r\n')[0]                                            # Get rid of carriage-return
+  - ps: $fullpath = ".\packages\$firstline\lib\net481\Packager.exe"                        # Build full path
   - ps: $env:PACKAGER_PATH=$fullpath
-  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS%'                                 # Execute the packager: the output is nuget\%APPVEYOR_PROJECT_NAME%.nuspec
-  - if exist nuget\%APPVEYOR_PROJECT_NAME%.nuspec nuget pack nuget\%APPVEYOR_PROJECT_NAME%.nuspec
-  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --debug'                         # Execute the packager: the output is nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
-  - if exist nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
-  - ps: |-
-        $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
+  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --prefix=%PACKAGE_PREFIX%'                  # Execute the packager: the output is nuget\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%.nuspec
+  - if exist nuget\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%.nuspec nuget pack nuget\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%.nuspec
+  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --prefix=%PACKAGE_PREFIX% --debug'          # Execute the packager: the output is nuget-debug\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%-Debug.nuspec
+  - if exist nuget-debug\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%-Debug.nuspec
+  - ps: $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
   - ps: $version=$xml.Project.PropertyGroup.Version
   - ps: set version_tag v$version
   - ps: $version_tag=$version_tag.Trim()
@@ -56,9 +58,9 @@ after_build:
 test: off
 
 artifacts:
-  - path: $(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
+  - path: $(PACKAGE_PREFIX).$(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Debug
-  - path: $(APPVEYOR_PROJECT_NAME).*.nupkg
+  - path: $(PACKAGE_PREFIX).$(APPVEYOR_PROJECT_NAME).*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Release
 
 deploy:
@@ -93,15 +95,13 @@ deploy:
       branch: deployment
       configuration: Release
   - provider: NuGet
-    server: https://nuget.pkg.github.com/dlebansais/index.json
-    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
-    skip_symbols: true
-    username: dlebansais
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
+    symbol_server: https://api.nuget.org/v3/index.json
     api_key:
-      secure: 5tcSRVegOcTQlDtIaRuucZxjxp4BmVhrdVoxJtejCcfsCmBV+ZwyfSXrlRsF9QxZ
+      secure: Wrt1RLR81rx4nHwWR3jbGRqiaevBfViPxp9R08sRQKTQ24v6ZOiHcNHcBKZ8do4+
     on:
       branch: deployment
-      configuration: Release
+      configuration: Debug
   - provider: NuGet
     server: https://nuget.pkg.github.com/dlebansais/index.json
     symbol_server: https://nuget.pkg.github.com/dlebansais/index.json
@@ -112,3 +112,13 @@ deploy:
     on:
       branch: deployment
       configuration: Debug
+  - provider: NuGet
+    server: https://nuget.pkg.github.com/dlebansais/index.json
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
+    skip_symbols: true
+    username: dlebansais
+    api_key:
+      secure: 5tcSRVegOcTQlDtIaRuucZxjxp4BmVhrdVoxJtejCcfsCmBV+ZwyfSXrlRsF9QxZ
+    on:
+      branch: deployment
+      configuration: Release
