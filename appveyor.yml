@@ -17,9 +17,8 @@ init:
   - git config --global core.autocrlf input
 
 environment:
-# value: <password to decrypt snk file>
-  SnkPassword:
-    secure: 1svE5KENguPZZA9WI7jqI4rFGWREjMTmt//xbbv+POFKS8BdTi/TE2zB7jU0e7BsYW8G1ZP/4NxjfvnM/EOuH/VxpbyUo8p6fayCu3fDKbLBAt7PWIRCy4mo7SWR0vHAw/Q6cFQHWfA7EVu7eVC66Q==
+# No signing
+  SnkPassword: none
   PACKAGE_PREFIX: dlebansais
 
 matrix:
@@ -30,8 +29,6 @@ before_build:
   - nuget restore %APPVEYOR_PROJECT_NAME%.sln
   - nuget install dlebansais.GitCommitId -DependencyVersion Highest -OutputDirectory packages
   - dotnet restore
-# Extract signing.snk to the current directory. Do not extract for a PR because they don't have access to secrets, but we don't need to sign assemblies in that case.
-  - if '%APPVEYOR_PULL_REQUEST_NUMBER%'=='' C:/PROGRA~1/7-Zip/7z.exe e -p%SnkPassword% .signing\key.zip > nul
 
 configuration:
   - Release
