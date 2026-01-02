@@ -16,7 +16,7 @@
         <Company />
         <Product />
         <Description>Create an icon on the Windows taskbar and manage its menu</Description>
-        <Copyright>Copyright © 2025 David Le Bansais</Copyright>
+        <Copyright>Copyright © 2026 David Le Bansais</Copyright>
         <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 

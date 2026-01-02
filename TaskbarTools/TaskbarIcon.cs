@@ -468,9 +468,7 @@ public partial class TaskbarIcon : IDisposable
         }
     }
 
-    /// <summary>
-    /// Called when an object should release its resources.
-    /// </summary>
+    /// <inheritdoc />
     public void Dispose()
     {
         Dispose(true);

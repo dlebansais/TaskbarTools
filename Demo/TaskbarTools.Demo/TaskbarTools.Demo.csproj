@@ -16,7 +16,7 @@
         <Company />
         <Product />
         <Description>TaskbarTools Demo</Description>
-        <Copyright>Copyright © 2025 David Le Bansais</Copyright>
+        <Copyright>Copyright © 2026 David Le Bansais</Copyright>
         <RepositoryUrl>https://github.com/dlebansais/TaskbarTools</RepositoryUrl>
 
         <NeutralLanguage>en-US</NeutralLanguage>
