@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net481;net8.0-windows7.0;net9.0-windows7.0</TargetFrameworks>
-        <UseWPF>true</UseWPF>
-        <UseWindowsForms>true</UseWindowsForms>
-        <LangVersion>13</LangVersion>
+        <TargetFrameworks>netcoreapp3.1;net481;net8.0-windows7.0;net10.0-windows7.0</TargetFrameworks>
+        <LangVersion>14</LangVersion>
         <Nullable>enable</Nullable>
         <Platforms>x64</Platforms>
+        <UseWPF>true</UseWPF>
+        <UseWindowsForms>true</UseWindowsForms>
 
         <RootNamespace>TaskbarTools</RootNamespace>
-        <Version>4.0.0</Version>
-        <AssemblyVersion>4.0.0.35</AssemblyVersion>
-        <FileVersion>4.0.0.35</FileVersion>
+        <Version>4.0.1</Version>
+        <AssemblyVersion>4.0.1.36</AssemblyVersion>
+        <FileVersion>4.0.1.36</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Company />
         <Product />
@@ -72,7 +72,7 @@
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="dlebansais.Method.Contracts.Analyzers-Debug" Version="2.0.6" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <PackageReference Include="dlebansais.Method.Contracts.Analyzers-Debug" Version="2.0.10" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -81,7 +81,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="dlebansais.Method.Contracts-Debug" Version="2.0.5" GeneratePathProperty="true" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.Method.Contracts-Debug" Version="2.0.7" GeneratePathProperty="true" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="dlebansais.Method.Contracts" Version="2.0.7" GeneratePathProperty="true" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
 

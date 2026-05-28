@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Contracts;
 using TaskbarTools;
 
 /// <summary>
@@ -142,7 +143,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged, IDisposable
     private static Icon LoadResourceIcon(string resourceName)
     {
         Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-        using Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!;
+        using Stream ResourceStream = Contract.AssertNotNull(CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}"));
         Icon ResourceIcon = new(ResourceStream);
         return ResourceIcon;
     }
@@ -150,7 +151,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged, IDisposable
     private static Bitmap LoadResourceBitmap(string resourceName)
     {
         Assembly CurrentAssembly = Assembly.GetExecutingAssembly();
-        using Stream ResourceStream = CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}")!;
+        using Stream ResourceStream = Contract.AssertNotNull(CurrentAssembly.GetManifestResourceStream($"TaskbarToolsDemo.{resourceName}"));
         Bitmap ResourceBitmap = new(ResourceStream);
         return ResourceBitmap;
     }
