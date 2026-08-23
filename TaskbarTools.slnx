@@ -1,0 +1,18 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="Demo/TaskbarTools.Demo/TaskbarTools.Demo.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="PreBuild/PreBuild.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="TaskbarTools/TaskbarTools.csproj">
+    <BuildDependency Project="PreBuild/PreBuild.csproj" />
+    <Platform Project="x64" />
+  </Project>
+</Solution>
