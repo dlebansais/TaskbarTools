@@ -22,6 +22,8 @@ init:
 environment:
 # No signing
   SnkPassword: none
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CUSTOM_PACKAGER_OPTIONS: "[]"           # Override in settings -> Environment -> Environment variables
   PACKAGE_PREFIX: dlebansais
 
 matrix:
@@ -29,8 +31,9 @@ matrix:
   fast_finish: true
 
 before_build:
-  - nuget restore %APPVEYOR_PROJECT_NAME%.sln
+  - nuget restore %APPVEYOR_PROJECT_NAME%.slnx
   - nuget install dlebansais.GitCommitId -DependencyVersion Highest -OutputDirectory packages
+  - nuget install dlebansais.Packager -DependencyVersion Highest -OutputDirectory packages
   - dotnet restore
 
 configuration:
@@ -38,23 +41,28 @@ configuration:
   - Debug
 
 build:
-  project: $(APPVEYOR_PROJECT_NAME).sln
+  project: $(APPVEYOR_PROJECT_NAME).slnx
 
 after_build:
-  - nuget install dlebansais.Packager -DependencyVersion Highest -OutputDirectory packages # Install Packager
-  - ps: $folder = Get-ChildItem -Path packages/dlebansais.Packager.* -Name | Out-String    # Get the installation folder (we don't know the actual version)
-  - ps: $firstline = ($folder -split '\r\n')[0]                                            # Get rid of carriage-return
-  - ps: $fullpath = ".\packages\$firstline\lib\net481\Packager.exe"                        # Build full path
-  - ps: $env:PACKAGER_PATH=$fullpath
-  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --prefix=%PACKAGE_PREFIX%'                  # Execute the packager: the output is nuget\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%.nuspec
-  - if exist nuget\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%.nuspec nuget pack nuget\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%.nuspec
-  - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS% --prefix=%PACKAGE_PREFIX% --debug'          # Execute the packager: the output is nuget-debug\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%-Debug.nuspec
-  - if exist nuget-debug\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%-Debug.nuspec nuget pack nuget-debug\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%-Debug.nuspec
-  - ps: $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
-  - ps: $version=$xml.Project.PropertyGroup.Version
-  - ps: set version_tag v$version
-  - ps: $version_tag=$version_tag.Trim()
-  - ps: $env:VERSION_TAG=$version_tag
+  - ps: |
+      $folder = Get-ChildItem -Path packages/dlebansais.Packager.* -Name | Out-String    # Get the installation folder (we don't know the actual version)
+      $firstline = ($folder -split '\r\n')[0]                                            # Get rid of carriage-return
+      $fullpath = ".\packages\$firstline\tools\net10.0-windows7.0\Packager.exe"          # Build full path
+      $options = $env:CUSTOM_PACKAGER_OPTIONS | ConvertFrom-Json                         # Get options as JSON array
+      if ($env:CONFIGURATION -eq 'Release') {
+        & $fullpath $options --prefix=$env:PACKAGE_PREFIX                                # Execute the packager: the output is nuget\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%.nuspec
+        if ($LastExitCode -lt 0) { exit 1 }
+        nuget pack "nuget\$env:PACKAGE_PREFIX.$env:APPVEYOR_PROJECT_NAME.nuspec"
+      } else {
+        & $fullpath $options --prefix=$env:PACKAGE_PREFIX --debug                        # Execute the packager: the output is nuget-debug\%PACKAGE_PREFIX%.%APPVEYOR_PROJECT_NAME%-Debug.nuspec
+        if ($LastExitCode -lt 0) { exit 1 }
+        nuget pack "nuget-debug\$env:PACKAGE_PREFIX.$env:APPVEYOR_PROJECT_NAME-Debug.nuspec"
+      }
+      $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
+      $version=$xml.Project.PropertyGroup.Version
+      set version_tag v$version
+      $version_tag=$version_tag.Trim()
+      $env:VERSION_TAG=$version_tag
   - echo Version is "%VERSION_TAG%"
 
 test: off
